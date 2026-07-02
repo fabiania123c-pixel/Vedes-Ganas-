@@ -197,6 +197,7 @@ export default function App(){
     document.body.style.overflowX="hidden";
   },[]);
 
+  const[started,setStarted]=useState(false);
   const[cargo,setCargo]=useState(null);
   const[concepto,setConcepto]=useState(null);
   const[pin,setPin]=useState("");
@@ -231,6 +232,17 @@ export default function App(){
   const cumplA=useMemo(()=>{const m=parseFloat(metaA),v=parseFloat(ventaA);return m>0&&v>0?v/m:null;},[metaA,ventaA]);
   const cumplT=useMemo(()=>{const m=parseFloat(metaT),v=parseFloat(ventaT);if(m>0&&v>0)return v/m;if(rangoT)return RANGO_V[rangoT];return null;},[metaT,ventaT,rangoT]);
   const campeon=resultado?.tipo!=="soloTasa"&&(resultado?.cumplA||resultado?.cumplT||0)>=1.3;
+
+  if(!started){
+    return(
+      <div style={{minHeight:"100vh",width:"100%",background:C.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"clamp(20px,6vw,40px)",boxSizing:"border-box",gap:"clamp(24px,6vw,40px)"}}>
+        <img src="/banner.jpg" alt="Vendes+, Ganas+ Marathon" style={{width:"100%",maxWidth:480,borderRadius:20,boxShadow:"0 0 60px rgba(21,101,192,.25)"}}/>
+        <button onClick={()=>setStarted(true)} style={{background:C.b1,color:"#fff",border:"none",borderRadius:16,padding:"18px 40px",fontFamily:"Barlow Condensed,sans-serif",fontWeight:900,fontSize:"clamp(20px,5vw,26px)",letterSpacing:".02em",cursor:"pointer",boxShadow:"0 0 40px rgba(21,101,192,.4)"}}>
+          CALCULAR MIS GANANCIAS
+        </button>
+      </div>
+    );
+  }
 
   return(
     <div style={{minHeight:"100vh",width:"100%",background:C.bg,color:C.whi,fontFamily:"Inter,sans-serif",boxSizing:"border-box",overflowX:"hidden"}}>
