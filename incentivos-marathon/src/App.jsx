@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 
 const T70 = {
-  "MARATHON SPORTS": [[.9499,.0015],[.9999,.003],[1.0999,.005],[1.2999,.01],[1.3,.012]],
-  "EXPLORER":        [[.9499,.009], [.9999,.01], [1.0999,.013],[1.2999,.015],[1.3,.018]],
+  "MARATHON SPORTS": [[.9499,.0015],[.9999,.003],[1.0999,.004],[1.2999,.009],[1.3,.012]],
+  "EXPLORER":        [[.9499,.007], [.9999,.008],[1.0999,.011],[1.2999,.013],[1.3,.015]],
   "TELESHOP":        [[.9499,.012], [.9999,.015],[1.0999,.017],[1.2999,.02], [1.3,.023]],
-  "TAF":             [[.9499,.009], [.9999,.01], [1.0999,.013],[1.2999,.015],[1.3,.018]],
-  "PUMA":            [[.9499,.009], [.9999,.01], [1.0999,.013],[1.2999,.015],[1.3,.018]],
-  "UNDER ARMOUR":    [[.9499,.009], [.9999,.01], [1.0999,.013],[1.2999,.015],[1.3,.018]],
+  "TAF":             [[.9499,.007], [.9999,.008],[1.0999,.011],[1.2999,.013],[1.3,.015]],
+  "PUMA":            [[.9499,.007], [.9999,.008],[1.0999,.011],[1.2999,.013],[1.3,.015]],
+  "UNDER ARMOUR":    [[.9499,.007], [.9999,.008],[1.0999,.011],[1.2999,.013],[1.3,.015]],
   "CIKLA":           [[.9499,.0035],[.9999,.005],[1.0999,.008],[1.2999,.012],[1.3,.018]],
-  "BIG HEAD":        [[.9499,.009], [.9999,.01], [1.0999,.013],[1.2999,.015],[1.3,.018]],
+  "BIG HEAD":        [[.9499,.007], [.9999,.008],[1.0999,.011],[1.2999,.013],[1.3,.015]],
   "JANSPORT":        [[.9499,.0035],[.9999,.005],[1.0999,.008],[1.2999,.012],[1.3,.018]],
   "XPLOIT":          [[.9499,.007], [.9999,.008],[1.0999,.01], [1.2999,.012],[1.3,.018]],
 };
@@ -267,7 +267,7 @@ export default function App(){
 
         {showPin&&(
           <div style={{marginBottom:"clamp(24px,6vw,40px)",background:C.surf,borderRadius:16,padding:"clamp(20px,5vw,28px)",border:`1px solid ${C.b0}`,boxSizing:"border-box"}}>
-            <p style={{color:C.mut,fontSize:15,margin:"0 0 14px"}}>PIN de acceso para Jefe de Almacén</p>
+            <p style={{color:C.mut,fontSize:15,margin:"0 0 14px"}}>PIN de acceso</p>
             <div style={{display:"flex",gap:10}}>
               <input type="password" value={pin} onChange={e=>{setPin(e.target.value);setPinErr(false);}} onKeyDown={e=>e.key==="Enter"&&submitPin()} placeholder="Ingresa tu PIN"
                 style={{flex:1,minWidth:0,background:C.card,border:`1px solid ${pinErr?"#EF5350":C.b0}`,borderRadius:12,padding:"14px 16px",color:C.whi,fontSize:16,outline:"none",fontFamily:"inherit",boxSizing:"border-box"}}/>
