@@ -522,12 +522,18 @@ export default function App(){
         {bajoMinimo&&(
           <div style={{marginBottom:"clamp(24px,6vw,40px)",borderRadius:20,padding:"clamp(32px,8vw,56px) clamp(24px,6vw,40px)",textAlign:"center",boxSizing:"border-box",
             background:"linear-gradient(135deg,#0C1828,#081018)",border:`1px solid ${C.b0}`}}>
+            {resultado.bono>0&&(
+              <div style={{marginBottom:28,padding:"20px 24px",borderRadius:14,background:`${C.gld}18`,border:`1px solid ${C.gld}40`,display:"inline-block"}}>
+                <span style={{color:C.gld,fontSize:"clamp(28px,7vw,40px)",fontWeight:900,fontFamily:"Barlow Condensed,sans-serif"}}>+ ${resultado.bono.toFixed(2)}</span>
+                <p style={{color:C.gld,fontSize:"clamp(13px,3.5vw,15px)",margin:"4px 0 0",fontWeight:600}}>bono Margen Bruto</p>
+              </div>
+            )}
             <div style={{fontSize:"clamp(32px,8vw,48px)",marginBottom:16}}>💪</div>
             <p style={{color:C.whi,fontSize:"clamp(18px,4.5vw,24px)",fontWeight:600,margin:"0 0 12px",fontFamily:"Barlow Condensed,sans-serif"}}>
-              Este mes todavía no activas tu incentivo
+              Este mes todavía no activas tu incentivo por ventas
             </p>
             <p style={{color:C.mut,fontSize:"clamp(14px,3.8vw,16px)",lineHeight:1.6,margin:"0 auto",maxWidth:420}}>
-              El incentivo se activa desde el 90% de cumplimiento. Aún estás a tiempo de cerrar el mes fuerte — cada venta te acerca a esa meta.
+              El incentivo por ventas se activa desde el 90% de cumplimiento. Aún estás a tiempo de cerrar el mes fuerte — cada venta te acerca a esa meta.
             </p>
           </div>
         )}
