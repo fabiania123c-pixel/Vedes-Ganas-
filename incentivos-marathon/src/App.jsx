@@ -1,67 +1,131 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 
-const T70 = {
-  "MARATHON SPORTS": [[.9499,.0015],[.9999,.003],[1.0999,.004],[1.2999,.009],[1.3,.012]],
-  "EXPLORER":        [[.9499,.007], [.9999,.008],[1.0999,.011],[1.2999,.013],[1.3,.015]],
-  "TELESHOP":        [[.9499,.012], [.9999,.015],[1.0999,.017],[1.2999,.02], [1.3,.023]],
-  "TAF":             [[.9499,.007], [.9999,.008],[1.0999,.011],[1.2999,.013],[1.3,.015]],
-  "PUMA":            [[.9499,.007], [.9999,.008],[1.0999,.011],[1.2999,.013],[1.3,.015]],
-  "UNDER ARMOUR":    [[.9499,.007], [.9999,.008],[1.0999,.011],[1.2999,.013],[1.3,.015]],
-  "CIKLA":           [[.9499,.0035],[.9999,.005],[1.0999,.008],[1.2999,.012],[1.3,.018]],
-  "BIG HEAD":        [[.9499,.007], [.9999,.008],[1.0999,.011],[1.2999,.013],[1.3,.015]],
-  "JANSPORT":        [[.9499,.0035],[.9999,.005],[1.0999,.008],[1.2999,.012],[1.3,.018]],
-  "XPLOIT":          [[.9499,.007], [.9999,.008],[1.0999,.01], [1.2999,.012],[1.3,.018]],
+// ═══════════════════════════════════════════════════════════
+// TASAS ASESOR 70-30 — actualizado 20 julio 2026
+// ═══════════════════════════════════════════════════════════
+const T70_CLUSTER = {
+  "MARATHON SPORTS": {
+    A: [[.9,0],[.9499,.0015],[.9999,.002], [1.0999,.003],[1.2999,.004],[1.3,.006]],
+    B: [[.9,0],[.9499,.002], [.9999,.003],[1.0999,.004],[1.2999,.006],[1.3,.008]],
+    C: [[.9,0],[.9499,.003], [.9999,.004],[1.0999,.006],[1.2999,.008],[1.3,.01]],
+  },
+  "EXPLORER": {
+    A: [[.9,0],[.9499,.0055],[.9999,.0065],[1.0999,.0075],[1.2999,.009],[1.3,.01]],
+    B: [[.9,0],[.9499,.007], [.9999,.009], [1.0999,.01],  [1.2999,.01], [1.3,.012]],
+  },
+};
+const T70_FLAT = {
+  "TELESHOP":     [[.9,0],[.9499,.012], [.9999,.015],[1.0999,.017],[1.2999,.02], [1.3,.023]],
+  "TAF":          [[.9,0],[.9499,.01],  [.9999,.0105],[1.0999,.011],[1.2999,.013],[1.3,.015]],
+  "PUMA":         [[.9,0],[.9499,.01],  [.9999,.0105],[1.0999,.011],[1.2999,.013],[1.3,.015]],
+  "UNDER ARMOUR": [[.9,0],[.9499,.007], [.9999,.008], [1.0999,.011],[1.2999,.013],[1.3,.015]],
+  "CIKLA":        [[.9,0],[.9499,.0035],[.9999,.005], [1.0999,.008],[1.2999,.012],[1.3,.018]],
+  "BIG HEAD":     [[.9,0],[.9499,.007], [.9999,.008], [1.0999,.011],[1.2999,.013],[1.3,.015]],
+  "JANSPORT":     [[.9,0],[.9499,.0035],[.9999,.005], [1.0999,.008],[1.2999,.012],[1.3,.018]],
+  "XPLOIT":       [[.9,0],[.9499,.007], [.9999,.008], [1.0999,.01], [1.2999,.012],[1.3,.018]],
 };
 const TBD = {
-  "BODEGA DEPORTIVA": [[0,0],[.9,.0004],[.9501,.0005],[1.,.0007],[1.1,.0009],[1.3,.0012]],
   "OUTLET":           [[0,0],[.9,.0004],[.9501,.0005],[1.,.0007],[1.1,.0009],[1.3,.0012]],
+  "BODEGA DEPORTIVA": [[0,0],[.9,.0004],[.9501,.0005],[1.,.0007],[1.1,.0009],[1.3,.0012]],
 };
-const TNA = {
+
+// ═══════════════════════════════════════════════════════════
+// TASAS NO-ASESOR — por cluster (Marathon/Explorer) y flat (resto)
+// ═══════════════════════════════════════════════════════════
+const TNA_CLUSTER = {
   "JEFE DE ALMACEN": {
-    "MARATHON SPORTS":  [[0,0],[.9,.0012],[.9501,.0025],[1.,.003],[1.1,.004],[1.3,.005]],
-    "BODEGA DEPORTIVA": [[0,0],[.9,.0015],[.9501,.0025],[1.,.0035],[1.1,.0045],[1.3,.0055]],
-    "OUTLET":           [[0,0],[.9,.0015],[.9501,.0025],[1.,.0035],[1.1,.0045],[1.3,.0055]],
-    "EXPLORER":         [[0,0],[.9,.003], [.9501,.004], [1.,.005],[1.1,.006],[1.3,.007]],
-    "TELESHOP":         [[0,0],[.9,.002], [.9501,.004], [1.,.006],[1.1,.008],[1.3,.01]],
-    "TAF":              [[0,0],[.9,.003], [.9501,.004], [1.,.005],[1.1,.006],[1.3,.007]],
-    "PUMA":             [[0,0],[.9,.003], [.9501,.004], [1.,.005],[1.1,.006],[1.3,.007]],
-    "UNDER ARMOUR":     [[0,0],[.9,.003], [.9501,.004], [1.,.005],[1.1,.006],[1.3,.007]],
+    "MARATHON SPORTS": {
+      A:[[0,0],[.9,.0005],[.9501,.001],[1.,.0015],[1.1,.002],[1.3,.003]],
+      B:[[0,0],[.9,.001], [.9501,.0015],[1.,.002],[1.1,.003],[1.3,.004]],
+      C:[[0,0],[.9,.0015],[.9501,.002], [1.,.0025],[1.1,.003],[1.3,.005]],
+    },
+    "EXPLORER": {
+      A:[[0,0],[.9,.0015],[.9501,.002],[1.,.003],[1.1,.004],[1.3,.005]],
+      B:[[0,0],[.9,.002], [.9501,.0025],[1.,.003],[1.1,.0035],[1.3,.005]],
+    },
+  },
+  "SUBJEFE DE ALMACEN": {
+    "MARATHON SPORTS": {
+      A:[[0,0],[.9,.0003],[.9501,.0008],[1.,.0013],[1.1,.0018],[1.3,.0023]],
+      B:[[0,0],[.9,.001], [.9501,.0015],[1.,.002], [1.1,.0025],[1.3,.003]],
+      C:[[0,0],[.9,.002], [.9501,.0025],[1.,.003], [1.1,.004], [1.3,.005]],
+    },
+    "EXPLORER": {
+      A:[[0,0],[.9,.001], [.9501,.0015],[1.,.002],[1.1,.0025],[1.3,.004]],
+      B:[[0,0],[.9,.0015],[.9501,.002], [1.,.0025],[1.1,.003],[1.3,.005]],
+    },
+  },
+  "CAJERO": {
+    "MARATHON SPORTS": {
+      A:[[0,0],[.9,.00005],[.9501,.0001],[1.,.0004],[1.1,.0005],[1.3,.0007]],
+      B:[[0,0],[.9,.0002], [.9501,.0003],[1.,.0005],[1.1,.0007],[1.3,.0009]],
+      C:[[0,0],[.9,.0003], [.9501,.0004],[1.,.0006],[1.1,.0008],[1.3,.001]],
+    },
+    "EXPLORER": {
+      A:[[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
+      B:[[0,0],[.9,.00007],[.9501,.0003],[1.,.0005],[1.1,.0008],[1.3,.0009]],
+    },
+  },
+  "AUX. DE BODEGA": {
+    "MARATHON SPORTS": {
+      A:[[0,0],[.9,.00005],[.9501,.0001],[1.,.0004],[1.1,.0005],[1.3,.0007]],
+      B:[[0,0],[.9,.0002], [.9501,.0003],[1.,.0005],[1.1,.0007],[1.3,.0009]],
+      C:[[0,0],[.9,.0003], [.9501,.0004],[1.,.0006],[1.1,.0008],[1.3,.001]],
+    },
+    "EXPLORER": {
+      A:[[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
+      B:[[0,0],[.9,.00007],[.9501,.0003],[1.,.0005],[1.1,.0008],[1.3,.0009]],
+    },
+  },
+};
+const TNA_FLAT = {
+  "JEFE DE ALMACEN": {
+    "OUTLET":           [[0,0],[.9,.001], [.9501,.002], [1.,.003],[1.1,.004],[1.3,.005]],
+    "BODEGA DEPORTIVA": [[0,0],[.9,.001], [.9501,.002], [1.,.003],[1.1,.004],[1.3,.005]],
+    "TELESHOP":         [[0,0],[.9,.002], [.9501,.003], [1.,.005],[1.1,.007],[1.3,.01]],
+    "TAF":              [[0,0],[.9,.003], [.9501,.0035],[1.,.004],[1.1,.0045],[1.3,.006]],
+    "PUMA":             [[0,0],[.9,.003], [.9501,.0035],[1.,.004],[1.1,.0045],[1.3,.006]],
+    "UNDER ARMOUR":     [[0,0],[.9,.003], [.9501,.0035],[1.,.004],[1.1,.0045],[1.3,.006]],
     "CIKLA":            [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.01]],
     "BIG HEAD":         [[0,0],[.9,.0015],[.9501,.003], [1.,.004],[1.1,.005],[1.3,.006]],
     "JANSPORT":         [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.01]],
     "XPLOIT":           [[0,0],[.9,.0015],[.9501,.003], [1.,.004],[1.1,.005],[1.3,.006]],
-    _d:                 [[0,0],[.9,.0015],[.9501,.0025],[1.,.003],[1.1,.004],[1.3,.005]],
   },
   "SUBJEFE DE ALMACEN": {
-    "MARATHON SPORTS":  [[0,0],[.9,.001], [.9501,.002], [1.,.0025],[1.1,.003],[1.3,.004]],
-    "BODEGA DEPORTIVA": [[0,0],[.9,.0012],[.9501,.002], [1.,.003],[1.1,.004],[1.3,.005]],
-    "OUTLET":           [[0,0],[.9,.0012],[.9501,.002], [1.,.003],[1.1,.004],[1.3,.005]],
-    "EXPLORER":         [[0,0],[.9,.002], [.9501,.003], [1.,.004],[1.1,.005],[1.3,.006]],
-    "TELESHOP":         [[0,0],[.9,.0015],[.9501,.0035],[1.,.0055],[1.1,.0075],[1.3,.0095]],
-    "TAF":              [[0,0],[.9,.002], [.9501,.003], [1.,.004],[1.1,.005],[1.3,.006]],
-    "PUMA":             [[0,0],[.9,.002], [.9501,.003], [1.,.004],[1.1,.005],[1.3,.006]],
-    "UNDER ARMOUR":     [[0,0],[.9,.002], [.9501,.003], [1.,.004],[1.1,.005],[1.3,.006]],
+    "OUTLET":           [[0,0],[.9,.001], [.9501,.0015],[1.,.002],[1.1,.003],[1.3,.004]],
+    "BODEGA DEPORTIVA": [[0,0],[.9,.001], [.9501,.0015],[1.,.002],[1.1,.003],[1.3,.004]],
+    "TELESHOP":         [[0,0],[.9,.0015],[.9501,.0025],[1.,.0045],[1.1,.0065],[1.3,.0095]],
+    "TAF":              [[0,0],[.9,.0015],[.9501,.002], [1.,.003],[1.1,.004],[1.3,.005]],
+    "PUMA":             [[0,0],[.9,.0015],[.9501,.002], [1.,.003],[1.1,.004],[1.3,.005]],
+    "UNDER ARMOUR":     [[0,0],[.9,.0015],[.9501,.002], [1.,.003],[1.1,.004],[1.3,.005]],
+    "CIKLA":            [[0,0],[.9,.00005],[.9501,.00055],[1.,.00105],[1.1,.00155],[1.3,.00205]],
     "BIG HEAD":         [[0,0],[.9,.0012],[.9501,.0025],[1.,.003],[1.1,.004],[1.3,.005]],
+    "JANSPORT":         [[0,0],[.9,.00005],[.9501,.00055],[1.,.00105],[1.1,.00155],[1.3,.00205]],
     "XPLOIT":           [[0,0],[.9,.0012],[.9501,.0025],[1.,.003],[1.1,.004],[1.3,.005]],
-    _d:                 [[0,0],[.9,.0012],[.9501,.002], [1.,.0025],[1.1,.003],[1.3,.004]],
   },
   "CAJERO": {
-    "MARATHON SPORTS":  [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
-    "BODEGA DEPORTIVA": [[0,0],[.9,.0001], [.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
-    "OUTLET":           [[0,0],[.9,.0001], [.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
-    "EXPLORER":         [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
+    "OUTLET":           [[0,0],[.9,.0001],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
+    "BODEGA DEPORTIVA": [[0,0],[.9,.0001],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
+    "TELESHOP":         [[0,0],[.9,0],[.9501,0],[1.,0],[1.1,0],[1.3,0]],
     "TAF":              [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
     "PUMA":             [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
     "UNDER ARMOUR":     [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
     "CIKLA":            [[0,0],[.9,0],[.9501,0],[1.,0],[1.1,0],[1.3,0]],
+    "BIG HEAD":         [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
     "JANSPORT":         [[0,0],[.9,0],[.9501,0],[1.,0],[1.1,0],[1.3,0]],
-    "TELESHOP":         [[0,0],[.9,0],[.9501,0],[1.,0],[1.1,0],[1.3,0]],
-    _d:                 [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
+    "XPLOIT":           [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
   },
   "AUX. DE BODEGA": {
-    "BODEGA DEPORTIVA": [[0,0],[.9,.0001],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
     "OUTLET":           [[0,0],[.9,.0001],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
-    _d:                 [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
+    "BODEGA DEPORTIVA": [[0,0],[.9,.0001],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
+    "TELESHOP":         [[0,0],[.9,0],[.9501,0],[1.,0],[1.1,0],[1.3,0]],
+    "TAF":              [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
+    "PUMA":             [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
+    "UNDER ARMOUR":     [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
+    "CIKLA":            [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.01]],
+    "BIG HEAD":         [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
+    "JANSPORT":         [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.01]],
+    "XPLOIT":           [[0,0],[.9,.00005],[.9501,.0002],[1.,.0004],[1.1,.0006],[1.3,.0008]],
   },
 };
 
@@ -70,14 +134,86 @@ const SIN_IV  = ["AUX. DE TIENDA","MECANICO BICICLETAS"];
 const PIN     = "INCENTIVOS2026*";
 const RANGOS  = ["< 90%","90–95%","95–100%","100–110%","110–130%","+130%"];
 const RANGO_V = {"< 90%":.85,"90–95%":.925,"95–100%":.975,"100–110%":1.05,"110–130%":1.20,"+130%":1.35};
-const CONCEPTOS = [
-  {id:"MARATHON SPORTS",lbl:"Marathon Sports"},{id:"EXPLORER",lbl:"Explorer"},
-  {id:"BODEGA DEPORTIVA",lbl:"Bodega Deportiva"},{id:"TELESHOP",lbl:"Teleshop"},
-  {id:"TAF",lbl:"TAF"},
-  {id:"OUTLET",lbl:"Outlet"},{id:"PUMA",lbl:"Puma"},
-  {id:"UNDER ARMOUR",lbl:"Under Armour"},{id:"BIG HEAD",lbl:"Big Head"},
-  {id:"JANSPORT",lbl:"Jansport"},
+
+// ═══════════════════════════════════════════════════════════
+// TIENDAS — Marathon (46) y Explorer (18) con cluster asignado
+// ═══════════════════════════════════════════════════════════
+const TIENDAS = [
+  {n:"MARATHON SPORTS 9 DE OCTUBRE", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS BAHIA DE CARAQUEZ", con:"MARATHON SPORTS", cl:"C"},
+  {n:"MARATHON SPORTS BOMBOLI SHOPPING", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS CITY MALL", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS COLON", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS CONDADO SHOPPING", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS EL BOSQUE", con:"MARATHON SPORTS", cl:"C"},
+  {n:"MARATHON SPORTS EL PORTAL", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS EL RECREO", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS IÑAQUITO", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS LAGUNA MALL", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS MALL DE LOS ANDES", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS MALL DEL ALTO", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS MALL DEL NORTE", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS MALL DEL PACIFICO", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS MALL DEL RIO", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS MALL DEL SOL", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS MALL DEL SUR", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS MALL EL JARDIN", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS MALTERIA PLAZA", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS MULTIPLAZA", con:"MARATHON SPORTS", cl:"C"},
+  {n:"MARATHON SPORTS MULTIPLAZA LA PRADERA", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS PASEO LA PENINSULA", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS PASEO MACHALA", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS PASEO PORTOVIEJO", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS PASEO SAN FRANCISCO", con:"MARATHON SPORTS", cl:"C"},
+  {n:"MARATHON SPORTS PASEO SANTO DOMINGO", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS PASEO SHOPPING AMBATO", con:"MARATHON SPORTS", cl:"C"},
+  {n:"MARATHON SPORTS PASEO SHOPPING BABAHOYO", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS PASEO SHOPPING DAULE", con:"MARATHON SPORTS", cl:"C"},
+  {n:"MARATHON SPORTS PASEO SHOPPING MANTA", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS PASEO SHOPPING MILAGRO", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS PASEO SHOPPING PLAYAS", con:"MARATHON SPORTS", cl:"C"},
+  {n:"MARATHON SPORTS PASEO SHOPPING QUEVEDO", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS PLAZA SHOPPING CENTER", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS POLICENTRO", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS QUICENTRO SHOPPING", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS QUICENTRO SUR", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS RIOBAMBA", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS RIOCENTRO EL DORADO", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS RIOCENTRO ENTRE RIOS", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS RIOCENTRO LOS CEIBOS", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS RIOCENTRO NORTE", con:"MARATHON SPORTS", cl:"B"},
+  {n:"MARATHON SPORTS SAN LUIS SHOPPING", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS SAN MARINO", con:"MARATHON SPORTS", cl:"A"},
+  {n:"MARATHON SPORTS SCALA SHOPPING", con:"MARATHON SPORTS", cl:"A"},
+  {n:"EXPLORER CONDADO SHOPPING", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER EL BOSQUE", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER EL PORTAL", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER EL RECREO", con:"EXPLORER", cl:"B"},
+  {n:"EXPLORER LAGUNA MALL", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER MALL DE LOS ANDES", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER MALL DEL RIO", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER MALL DEL SOL", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER MALL EL JARDIN", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER MALTERIA PLAZA", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER MULTIPLAZA LA PRADERA", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER PASEO SHOPPING RIOBAMBA", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER POLICENTRO", con:"EXPLORER", cl:"B"},
+  {n:"EXPLORER QUICENTRO SHOPPING", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER RIOCENTRO SHOPPING QUITO", con:"EXPLORER", cl:"B"},
+  {n:"EXPLORER SAN LUIS SHOPPING", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER SCALA SHOPPING", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER VENTURA MALL", con:"EXPLORER", cl:"B"},
 ];
+
+const CONCEPTOS_FLAT = [
+  {id:"MARATHON SPORTS",lbl:"Marathon Sports"},{id:"EXPLORER",lbl:"Explorer"},
+  {id:"TELESHOP",lbl:"Teleshop"},{id:"TAF",lbl:"TAF"},{id:"PUMA",lbl:"Puma"},
+  {id:"UNDER ARMOUR",lbl:"Under Armour"},{id:"CIKLA",lbl:"Cikla"},
+  {id:"BIG HEAD",lbl:"Big Head"},{id:"JANSPORT",lbl:"Jansport"},{id:"XPLOIT",lbl:"Xploit"},
+  {id:"OUTLET",lbl:"Outlet"},{id:"BODEGA DEPORTIVA",lbl:"Bodega Deportiva"},
+];
+const CON_TIENDAS = ["MARATHON SPORTS","EXPLORER"]; // conceptos que requieren elegir tienda
+
 const CARGOS = [
   {id:"ASESOR DE VENTAS",lbl:"Asesor",pin:false},
   {id:"CAJERO",lbl:"Cajero",pin:false},
@@ -96,31 +232,46 @@ const LVL = ["#1A2D45","#0D3B8C","#0D47A1","#1565C0","#1976D2","#1E88E5"];
 
 function porHasta(t,v){for(const[h,r]of t)if(v<=h)return r;return t[t.length-1][1];}
 function porDesde(t,v){let r=0;for(const[d,x]of t)if(v>=d)r=x;return r;}
-function tasaNA(cargo,concepto,cumpl){const g=TNA[cargo]||{};return porDesde(g[concepto]||g._d||[],cumpl);}
 
-function calc({concepto,cargo,metaA,ventaA,tiendaOk,ventaT,metaT,rangoT,margen}){
-  const esAse=cargo==="ASESOR DE VENTAS",es7030=esAse&&!!T70[concepto],esBD=esAse&&!!TBD[concepto];
-  if(esAse&&!es7030&&!esBD)return null;
-  if(es7030){
-    const m=parseFloat(metaA)||0,v=parseFloat(ventaA)||0;
-    if(!m||!v)return null;
-    const cumplA=v/m,tasa=porHasta(T70[concepto],cumplA),base=v*tasa,bono=margen?30:0;
-    return{tipo:"7030",comInd:base*.7,comTienda:tiendaOk?base*.3:0,bono,total:base*.7+(tiendaOk?base*.3:0)+bono,cumplA,tasa};
+function tasaAsesor70(concepto, cluster, cumpl) {
+  if (cluster && T70_CLUSTER[concepto]) return porHasta(T70_CLUSTER[concepto][cluster], cumpl);
+  return porHasta(T70_FLAT[concepto], cumpl);
+}
+function tasaNA(cargo, concepto, cluster, cumpl) {
+  if (cluster && TNA_CLUSTER[cargo] && TNA_CLUSTER[cargo][concepto]) {
+    return porDesde(TNA_CLUSTER[cargo][concepto][cluster], cumpl);
   }
-  if(esBD){
-    let cumplT=null,vt=parseFloat(ventaT)||0;
+  const flat = TNA_FLAT[cargo] || {};
+  return porDesde(flat[concepto] || [], cumpl);
+}
+
+function calc({concepto,cluster,cargo,metaA,ventaA,tiendaOk,ventaT,metaT,rangoT,margen}){
+  const esAse  = cargo==="ASESOR DE VENTAS";
+  const es7030 = esAse && (T70_CLUSTER[concepto] || T70_FLAT[concepto]) && concepto!=="OUTLET" && concepto!=="BODEGA DEPORTIVA";
+  const esBD   = esAse && !!TBD[concepto];
+
+  if (esAse && !es7030 && !esBD) return null;
+
+  if (es7030) {
+    const m=parseFloat(metaA)||0, v=parseFloat(ventaA)||0;
+    if(!m||!v) return null;
+    const cumplA=v/m, tasa=tasaAsesor70(concepto,cluster,cumplA), base=v*tasa, bono=margen?30:0;
+    return {tipo:"7030",comInd:base*.7,comTienda:tiendaOk?base*.3:0,bono,total:base*.7+(tiendaOk?base*.3:0)+bono,cumplA,tasa};
+  }
+  if (esBD) {
+    let cumplT=null, vt=parseFloat(ventaT)||0;
     if(metaT&&ventaT){const mt=parseFloat(metaT)||0;if(mt>0&&vt>0)cumplT=vt/mt;}else if(rangoT)cumplT=RANGO_V[rangoT];
-    if(cumplT===null)return null;
-    const tasa=porDesde(TBD[concepto],cumplT)*.8,bono=margen?30:0;
-    if(vt>0)return{tipo:"tienda",comInd:0,comTienda:vt*tasa,bono,total:vt*tasa+bono,cumplT,tasa};
-    return{tipo:"soloTasa",tasa,cumplT,bono};
+    if(cumplT===null) return null;
+    const tasa=porDesde(TBD[concepto],cumplT)*.8, bono=margen?30:0;
+    if(vt>0) return {tipo:"tienda",comInd:0,comTienda:vt*tasa,bono,total:vt*tasa+bono,cumplT,tasa};
+    return {tipo:"soloTasa",tasa,cumplT,bono};
   }
-  let cumplT=null,vt=parseFloat(ventaT)||0;
+  let cumplT=null, vt=parseFloat(ventaT)||0;
   if(metaT&&ventaT){const mt=parseFloat(metaT)||0;if(mt>0&&vt>0)cumplT=vt/mt;}else if(rangoT)cumplT=RANGO_V[rangoT];
-  if(cumplT===null)return null;
-  const tasa=tasaNA(cargo,concepto,cumplT),bono=margen?(BONO_NA[cargo]||0):0;
-  if(vt>0)return{tipo:"tienda",comInd:0,comTienda:vt*tasa,bono,total:vt*tasa+bono,cumplT,tasa};
-  return{tipo:"soloTasa",tasa,cumplT,bono};
+  if(cumplT===null) return null;
+  const tasa=tasaNA(cargo,concepto,cluster,cumplT), bono=margen?(BONO_NA[cargo]||0):0;
+  if(vt>0) return {tipo:"tienda",comInd:0,comTienda:vt*tasa,bono,total:vt*tasa+bono,cumplT,tasa};
+  return {tipo:"soloTasa",tasa,cumplT,bono};
 }
 
 function AnimNum({val}){
@@ -135,10 +286,10 @@ function AnimNum({val}){
 }
 
 function NivelBar({cumpl,is7030}){
-  if(cumpl==null)return null;
+  if(cumpl==null) return null;
   const maxs=is7030?[.9499,.9999,1.0999,1.2999,Infinity]:[.8999,.9499,.9999,1.0999,1.2999,Infinity];
   const lbls=is7030?["<95%","<100%","Meta","Superando","+130%"]:["<90%","90–95%","95–100%","100–110%","110–130%","+130%"];
-  const off=is7030?1:0,idx=maxs.findIndex(m=>cumpl<=m),act=idx===-1?maxs.length-1:idx;
+  const off=is7030?1:0, idx=maxs.findIndex(m=>cumpl<=m), act=idx===-1?maxs.length-1:idx;
   return(
     <div style={{margin:"10px 0 18px"}}>
       <div style={{display:"flex",gap:4}}>{lbls.map((_,i)=><div key={i} style={{flex:1,height:6,borderRadius:3,background:i<=act?LVL[i+off]:C.dim,transition:"background .3s",boxShadow:i===act?`0 0 8px ${LVL[i+off]}`:"none"}}/>)}</div>
@@ -199,7 +350,8 @@ export default function App(){
 
   const[started,setStarted]=useState(false);
   const[cargo,setCargo]=useState(null);
-  const[concepto,setConcepto]=useState(null);
+  const[tienda,setTienda]=useState(null);       // {n, con, cl} si es Marathon/Explorer
+  const[conceptoFlat,setConceptoFlat]=useState(null); // string si es otro concepto
   const[pin,setPin]=useState("");
   const[pinOk,setPinOk]=useState(false);
   const[pinErr,setPinErr]=useState(false);
@@ -216,22 +368,32 @@ export default function App(){
   const selCargo=c=>{if(c.pin&&!pinOk){setCargo(c);setShowPin(true);return;}setCargo(c);setShowPin(false);reset();};
   const submitPin=()=>{if(pin===PIN){setPinOk(true);setPinErr(false);setShowPin(false);reset();}else setPinErr(true);};
 
-  const esAsesor=cargo?.id==="ASESOR DE VENTAS";
-  const es7030=esAsesor&&!!T70[concepto];
-  const esBD=esAsesor&&!!TBD[concepto];
-  const noAse=!esAsesor;
-  const sinIV=cargo&&SIN_IV.includes(cargo.id);
-  const conBono=cargo&&["JEFE DE ALMACEN","SUBJEFE DE ALMACEN"].includes(cargo.id);
-  const needPin=cargo?.pin&&!pinOk;
+  const necesitaTienda = conceptoFlat && CON_TIENDAS.includes(conceptoFlat);
+  const concepto = necesitaTienda ? (tienda?tienda.con:null) : conceptoFlat;
+  const cluster  = tienda ? tienda.cl : null;
+  const listoParaInputs = necesitaTienda ? !!tienda : !!conceptoFlat;
 
-  const resultado=useMemo(()=>{
-    if(!cargo||!concepto||needPin||sinIV)return null;
-    return calc({concepto,cargo:cargo.id,metaA,ventaA,tiendaOk,ventaT,metaT,rangoT,margen});
-  },[cargo,concepto,metaA,ventaA,tiendaOk,ventaT,metaT,rangoT,margen,needPin,sinIV]);
+  const esAsesor = cargo?.id==="ASESOR DE VENTAS";
+  const es7030   = esAsesor && concepto && (T70_CLUSTER[concepto] || T70_FLAT[concepto]) && concepto!=="OUTLET" && concepto!=="BODEGA DEPORTIVA";
+  const esBD     = esAsesor && concepto && !!TBD[concepto];
+  const noAse    = !esAsesor;
+  const sinIV    = cargo && SIN_IV.includes(cargo.id);
+  const conBono  = cargo && ["JEFE DE ALMACEN","SUBJEFE DE ALMACEN"].includes(cargo.id);
+  const needPin  = cargo?.pin && !pinOk;
+
+  const resultado = useMemo(()=>{
+    if(!cargo||!concepto||!listoParaInputs||needPin||sinIV) return null;
+    return calc({concepto,cluster,cargo:cargo.id,metaA,ventaA,tiendaOk,ventaT,metaT,rangoT,margen});
+  },[cargo,concepto,cluster,listoParaInputs,metaA,ventaA,tiendaOk,ventaT,metaT,rangoT,margen,needPin,sinIV]);
 
   const cumplA=useMemo(()=>{const m=parseFloat(metaA),v=parseFloat(ventaA);return m>0&&v>0?v/m:null;},[metaA,ventaA]);
   const cumplT=useMemo(()=>{const m=parseFloat(metaT),v=parseFloat(ventaT);if(m>0&&v>0)return v/m;if(rangoT)return RANGO_V[rangoT];return null;},[metaT,ventaT,rangoT]);
   const campeon=resultado?.tipo!=="soloTasa"&&(resultado?.cumplA||resultado?.cumplT||0)>=1.3;
+
+  const cumplRelevante = es7030 ? cumplA : cumplT;
+  const bajoMinimo = resultado && cumplRelevante!=null && cumplRelevante < 0.90;
+
+  const box={marginBottom:"clamp(24px,6vw,40px)"};
 
   if(!started){
     return(
@@ -252,10 +414,11 @@ export default function App(){
           <h1 style={{margin:0,fontFamily:"Barlow Condensed,sans-serif",fontWeight:900,fontSize:"clamp(38px,11vw,64px)",lineHeight:1,letterSpacing:"-1px"}}>
             <span style={{color:C.b2}}>Vendes+</span><span style={{color:C.whi}}>, Ganas+</span>
           </h1>
-          <p style={{margin:"8px 0 0",color:C.mut,fontSize:"clamp(13px,3.5vw,16px)"}}>Simulador de Incentivo Variable · Ecuador 2026</p>
+          <p style={{margin:"8px 0 0",color:C.mut,fontSize:"clamp(13px,3.5vw,16px)"}}>Simulador de Incentivo Variable</p>
         </div>
 
-        <div style={{marginBottom:"clamp(24px,6vw,40px)"}}>
+        {/* PASO 1 — CARGO */}
+        <div style={box}>
           <div style={{color:C.mut,fontSize:12,textTransform:"uppercase",letterSpacing:".1em",marginBottom:16}}>¿Cuál es tu cargo?</div>
           <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
             {CARGOS.map(c=>{const a=cargo?.id===c.id;return(
@@ -265,6 +428,7 @@ export default function App(){
           </div>
         </div>
 
+        {/* PIN */}
         {showPin&&(
           <div style={{marginBottom:"clamp(24px,6vw,40px)",background:C.surf,borderRadius:16,padding:"clamp(20px,5vw,28px)",border:`1px solid ${C.b0}`,boxSizing:"border-box"}}>
             <p style={{color:C.mut,fontSize:15,margin:"0 0 14px"}}>PIN de acceso</p>
@@ -277,30 +441,45 @@ export default function App(){
           </div>
         )}
 
+        {/* PASO 2 — MARCA */}
         {cargo&&!showPin&&(
-          <div style={{marginBottom:"clamp(24px,6vw,40px)"}}>
-            <div style={{color:C.mut,fontSize:12,textTransform:"uppercase",letterSpacing:".1em",marginBottom:16}}>¿En qué concepto trabajas?</div>
+          <div style={box}>
+            <div style={{color:C.mut,fontSize:12,textTransform:"uppercase",letterSpacing:".1em",marginBottom:16}}>¿En qué marca trabajas?</div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(130px, 1fr))",gap:8}}>
-              {CONCEPTOS.map(con=>{const a=concepto===con.id;return(
-                <button key={con.id} onClick={()=>{setConcepto(con.id);reset();}} style={{padding:"14px 12px",borderRadius:14,cursor:"pointer",fontFamily:"inherit",fontSize:"clamp(12px,3.2vw,15px)",transition:"all .2s",textAlign:"left",border:a?`1px solid ${C.b1}`:`1px solid ${C.b0}`,background:a?`${C.b1}22`:"transparent",color:a?C.whi:C.mut,fontWeight:a?600:400,minWidth:0}}>
+              {CONCEPTOS_FLAT.map(con=>{const a=conceptoFlat===con.id;return(
+                <button key={con.id} onClick={()=>{setConceptoFlat(con.id);setTienda(null);reset();}} style={{padding:"14px 12px",borderRadius:14,cursor:"pointer",fontFamily:"inherit",fontSize:"clamp(12px,3.2vw,15px)",transition:"all .2s",textAlign:"left",border:a?`1px solid ${C.b1}`:`1px solid ${C.b0}`,background:a?`${C.b1}22`:"transparent",color:a?C.whi:C.mut,fontWeight:a?600:400,minWidth:0}}>
                   {con.lbl}
                 </button>);})}
             </div>
           </div>
         )}
 
-        {cargo&&concepto&&sinIV&&(
-          <div style={{marginBottom:"clamp(24px,6vw,40px)",background:C.surf,borderRadius:16,padding:"clamp(24px,6vw,32px)",border:`1px solid ${C.b0}`,textAlign:"center",boxSizing:"border-box"}}>
-            <p style={{color:C.sof,fontSize:"clamp(15px,4vw,18px)",margin:0,fontWeight:500}}>Este cargo no tiene incentivo variable en el modelo 2026.</p>
-            <p style={{color:C.mut,fontSize:14,margin:"8px 0 0"}}>Consulta con tu Jefe de Almacén.</p>
+        {/* PASO 2b — TIENDA (solo si eligió Marathon o Explorer) */}
+        {cargo&&conceptoFlat&&CON_TIENDAS.includes(conceptoFlat)&&!showPin&&(
+          <div style={box}>
+            <div style={{color:C.mut,fontSize:12,textTransform:"uppercase",letterSpacing:".1em",marginBottom:16}}>¿Cuál es tu tienda?</div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(150px, 1fr))",gap:8}}>
+              {TIENDAS.filter(t=>t.con===conceptoFlat).map(t=>{const a=tienda?.n===t.n;return(
+                <button key={t.n} onClick={()=>{setTienda(t);reset();}} style={{padding:"12px 12px",borderRadius:12,cursor:"pointer",fontFamily:"inherit",fontSize:"clamp(11px,3vw,13px)",transition:"all .2s",textAlign:"left",border:a?`1px solid ${C.b1}`:`1px solid ${C.b0}`,background:a?`${C.b1}22`:"transparent",color:a?C.whi:C.mut,fontWeight:a?600:400,minWidth:0}}>
+                  {t.n.replace(t.con+" ","")}
+                </button>);})}
+            </div>
           </div>
         )}
 
-        {cargo&&concepto&&!showPin&&!needPin&&!sinIV&&(
-          <div style={{marginBottom:"clamp(24px,6vw,40px)"}}>
+        {/* SIN INCENTIVO */}
+        {cargo&&listoParaInputs&&sinIV&&(
+          <div style={{marginBottom:"clamp(24px,6vw,40px)",background:C.surf,borderRadius:16,padding:"clamp(24px,6vw,32px)",border:`1px solid ${C.b0}`,textAlign:"center",boxSizing:"border-box"}}>
+            <p style={{color:C.sof,fontSize:"clamp(15px,4vw,18px)",margin:0,fontWeight:500}}>Este cargo no tiene incentivo variable en el modelo 2026.</p>
+          </div>
+        )}
+
+        {/* PASO 3 — INPUTS */}
+        {cargo&&listoParaInputs&&!showPin&&!needPin&&!sinIV&&(
+          <div style={box}>
             <div style={{background:C.surf,borderRadius:16,border:`1px solid ${C.b0}`,overflow:"hidden"}}>
               <div style={{padding:"14px clamp(16px,5vw,28px)",background:"#081018",borderBottom:`1px solid ${C.b0}`,display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
-                <span style={{fontSize:13,color:C.b2,textTransform:"uppercase",letterSpacing:".08em",fontWeight:600}}>{concepto}</span>
+                <span style={{fontSize:13,color:C.b2,textTransform:"uppercase",letterSpacing:".08em",fontWeight:600}}>{tienda?tienda.n:concepto}</span>
                 <span style={{color:C.dim}}>·</span>
                 <span style={{fontSize:13,color:C.mut}}>{cargo.lbl}</span>
               </div>
@@ -337,8 +516,6 @@ export default function App(){
                     <div style={{color:C.mut,fontSize:11,textTransform:"uppercase",letterSpacing:".07em",margin:"12px 0"}}>— o elige el nivel —</div>
                     <Rango val={rangoT} set={r=>{setRangoT(r);setMetaT("");}}/>
                     {conBono&&<div style={{marginTop:20}}><Tog lbl={`¿Margen Bruto ≥ 100%? (+$${cargo.id==="JEFE DE ALMACEN"?100:70})`} val={margen} set={setMargen} note="Bono fijo adicional que aplica a tu cargo."/></div>}
-                    {cargo.id==="CAJERO"&&<p style={{marginTop:16,color:C.mut,fontSize:13,padding:"10px 14px",background:C.dim,borderRadius:10}}>El Cajero no recibe bono de Margen Bruto.</p>}
-                    {cargo.id==="AUX. DE BODEGA"&&<p style={{marginTop:16,color:C.mut,fontSize:13,padding:"10px 14px",background:C.dim,borderRadius:10}}>El Aux. de Bodega no recibe bono de Margen Bruto.</p>}
                   </>
                 )}
               </div>
@@ -346,7 +523,22 @@ export default function App(){
           </div>
         )}
 
-        {resultado&&(
+        {/* MENSAJE MOTIVADOR — bajo el mínimo */}
+        {bajoMinimo&&(
+          <div style={{marginBottom:"clamp(24px,6vw,40px)",borderRadius:20,padding:"clamp(32px,8vw,56px) clamp(24px,6vw,40px)",textAlign:"center",boxSizing:"border-box",
+            background:"linear-gradient(135deg,#0C1828,#081018)",border:`1px solid ${C.b0}`}}>
+            <div style={{fontSize:"clamp(32px,8vw,48px)",marginBottom:16}}>💪</div>
+            <p style={{color:C.whi,fontSize:"clamp(18px,4.5vw,24px)",fontWeight:600,margin:"0 0 12px",fontFamily:"Barlow Condensed,sans-serif"}}>
+              Este mes todavía no activas tu incentivo
+            </p>
+            <p style={{color:C.mut,fontSize:"clamp(14px,3.8vw,16px)",lineHeight:1.6,margin:"0 auto",maxWidth:420}}>
+              El incentivo se activa desde el 90% de cumplimiento. Aún estás a tiempo de cerrar el mes fuerte — cada venta te acerca a esa meta.
+            </p>
+          </div>
+        )}
+
+        {/* RESULTADO */}
+        {resultado&&!bajoMinimo&&(
           <div style={{marginBottom:"clamp(24px,6vw,40px)",borderRadius:20,padding:"clamp(28px,7vw,48px) clamp(20px,5vw,48px)",textAlign:"center",boxSizing:"border-box",
             background:campeon?"linear-gradient(135deg,#131000,#0C1828)":"linear-gradient(135deg,#081428,#060C16)",
             border:`1px solid ${campeon?C.gld:C.b1}`,
@@ -385,7 +577,6 @@ export default function App(){
                 )}
               </>
             )}
-            <p style={{color:C.b0,fontSize:11,margin:"24px 0 0",lineHeight:1.5}}>Simulación educativa · Los montos reales pueden variar según políticas internas.</p>
           </div>
         )}
 
