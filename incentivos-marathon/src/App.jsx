@@ -466,7 +466,7 @@ export default function App(){
             <div onClick={e=>e.stopPropagation()} style={{background:C.surf,borderTopLeftRadius:20,borderTopRightRadius:20,padding:"28px 24px",width:"100%",boxSizing:"border-box",border:`1px solid ${C.b0}`}}>
               <p style={{color:C.whi,fontWeight:700,fontSize:18,margin:"0 0 16px",fontFamily:"Barlow Condensed,sans-serif"}}>Instalar en iPhone</p>
               <p style={{color:C.sof,fontSize:15,lineHeight:1.7,margin:"0 0 20px"}}>
-                1. Toca el ícono <strong>"•••"</strong> en la parte superior, junto a la barra de direcciones<br/>
+                1. Toca el ícono <strong>"•••"</strong> en la parte inferior derecha de la pantalla<br/>
                 2. Selecciona <strong>"Compartir"</strong> en el menú que aparece<br/>
                 3. Desliza hacia abajo en el siguiente menú<br/>
                 4. Selecciona <strong>"Agregar a pantalla de inicio"</strong><br/>
