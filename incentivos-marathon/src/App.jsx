@@ -466,9 +466,11 @@ export default function App(){
             <div onClick={e=>e.stopPropagation()} style={{background:C.surf,borderTopLeftRadius:20,borderTopRightRadius:20,padding:"28px 24px",width:"100%",boxSizing:"border-box",border:`1px solid ${C.b0}`}}>
               <p style={{color:C.whi,fontWeight:700,fontSize:18,margin:"0 0 16px",fontFamily:"Barlow Condensed,sans-serif"}}>Instalar en iPhone</p>
               <p style={{color:C.sof,fontSize:15,lineHeight:1.7,margin:"0 0 20px"}}>
-                1. Toca el ícono de <strong>Compartir</strong> (cuadrado con flecha) abajo en Safari<br/>
-                2. Busca y toca <strong>"Agregar a pantalla de inicio"</strong><br/>
-                3. Toca <strong>"Agregar"</strong> arriba a la derecha
+                1. Toca el ícono <strong>"•••"</strong> en la parte superior, junto a la barra de direcciones<br/>
+                2. Selecciona <strong>"Compartir"</strong> en el menú que aparece<br/>
+                3. Desliza hacia abajo en el siguiente menú<br/>
+                4. Selecciona <strong>"Agregar a pantalla de inicio"</strong><br/>
+                5. Toca <strong>"Agregar"</strong> en la esquina superior derecha
               </p>
               <button onClick={()=>setShowIosHelp(false)} style={{background:C.b1,color:"#fff",border:"none",borderRadius:12,padding:"12px 24px",width:"100%",fontWeight:600,fontSize:15,cursor:"pointer"}}>Entendido</button>
             </div>
