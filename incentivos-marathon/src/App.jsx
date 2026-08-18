@@ -371,6 +371,32 @@ export default function App(){
   },[]);
 
   const[started,setStarted]=useState(false);
+  const[deferredPrompt,setDeferredPrompt]=useState(null);
+  const[showIosHelp,setShowIosHelp]=useState(false);
+  const[yaInstalada,setYaInstalada]=useState(false);
+
+  useEffect(()=>{
+    const esStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
+    setYaInstalada(esStandalone);
+
+    const onBeforeInstall = (e)=>{ e.preventDefault(); setDeferredPrompt(e); };
+    window.addEventListener('beforeinstallprompt', onBeforeInstall);
+    window.addEventListener('appinstalled', ()=>{ setYaInstalada(true); setDeferredPrompt(null); });
+    return ()=>window.removeEventListener('beforeinstallprompt', onBeforeInstall);
+  },[]);
+
+  const esIOS = typeof navigator!=="undefined" && /iPhone|iPad|iPod/.test(navigator.userAgent);
+
+  const handleDescargar = async ()=>{
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      setDeferredPrompt(null);
+    } else if(esIOS){
+      setShowIosHelp(true);
+    }
+  };
+
   const[cargo,setCargo]=useState(null);
   const[tienda,setTienda]=useState(null);       // {n, con, cl} si es Marathon/Explorer
   const[conceptoFlat,setConceptoFlat]=useState(null); // string si es otro concepto
@@ -419,11 +445,35 @@ export default function App(){
 
   if(!started){
     return(
-      <div style={{minHeight:"100vh",width:"100%",background:C.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"clamp(20px,6vw,40px)",boxSizing:"border-box",gap:"clamp(24px,6vw,40px)"}}>
+      <div style={{minHeight:"100vh",width:"100%",background:C.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"clamp(20px,6vw,40px)",boxSizing:"border-box",gap:"clamp(20px,5vw,32px)"}}>
         <img src="/banner.jpg" alt="Vendes+, Ganas+ Marathon" style={{width:"100%",maxWidth:480,borderRadius:20,boxShadow:"0 0 60px rgba(21,101,192,.25)"}}/>
+
+        {!yaInstalada&&(deferredPrompt||esIOS)&&(
+          <button onClick={handleDescargar} style={{background:"transparent",color:C.b2,border:`1.5px solid ${C.b1}`,borderRadius:14,padding:"12px 24px",fontFamily:"Inter,sans-serif",fontWeight:600,fontSize:"clamp(14px,3.5vw,16px)",cursor:"pointer",display:"flex",alignItems:"center",gap:8}}>
+            <span style={{fontSize:18}}>📲</span> Descarga la app en tu celular
+          </button>
+        )}
+        {yaInstalada&&(
+          <p style={{color:C.mut,fontSize:13,margin:0}}>✓ App instalada en tu celular</p>
+        )}
+
         <button onClick={()=>setStarted(true)} style={{background:C.b1,color:"#fff",border:"none",borderRadius:16,padding:"18px 40px",fontFamily:"Barlow Condensed,sans-serif",fontWeight:900,fontSize:"clamp(20px,5vw,26px)",letterSpacing:".02em",cursor:"pointer",boxShadow:"0 0 40px rgba(21,101,192,.4)"}}>
           CALCULAR MIS GANANCIAS
         </button>
+
+        {showIosHelp&&(
+          <div onClick={()=>setShowIosHelp(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.7)",display:"flex",alignItems:"flex-end",zIndex:100}}>
+            <div onClick={e=>e.stopPropagation()} style={{background:C.surf,borderTopLeftRadius:20,borderTopRightRadius:20,padding:"28px 24px",width:"100%",boxSizing:"border-box",border:`1px solid ${C.b0}`}}>
+              <p style={{color:C.whi,fontWeight:700,fontSize:18,margin:"0 0 16px",fontFamily:"Barlow Condensed,sans-serif"}}>Instalar en iPhone</p>
+              <p style={{color:C.sof,fontSize:15,lineHeight:1.7,margin:"0 0 20px"}}>
+                1. Toca el ícono de <strong>Compartir</strong> (cuadrado con flecha) abajo en Safari<br/>
+                2. Busca y toca <strong>"Agregar a pantalla de inicio"</strong><br/>
+                3. Toca <strong>"Agregar"</strong> arriba a la derecha
+              </p>
+              <button onClick={()=>setShowIosHelp(false)} style={{background:C.b1,color:"#fff",border:"none",borderRadius:12,padding:"12px 24px",width:"100%",fontWeight:600,fontSize:15,cursor:"pointer"}}>Entendido</button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
