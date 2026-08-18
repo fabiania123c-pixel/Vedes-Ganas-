@@ -1,23 +1,28 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 
 // ═══════════════════════════════════════════════════════════
-// TASAS ASESOR 70-30 — actualizado 20 julio 2026
+// TASAS ASESOR 70-30 — actualizado 13 agosto 2026
 // ═══════════════════════════════════════════════════════════
 const T70_CLUSTER = {
   "MARATHON SPORTS": {
-    A: [[.9,0],[.9499,.0015],[.9999,.002], [1.0999,.003],[1.2999,.004],[1.3,.006]],
-    B: [[.9,0],[.9499,.002], [.9999,.003],[1.0999,.004],[1.2999,.006],[1.3,.008]],
-    C: [[.9,0],[.9499,.003], [.9999,.004],[1.0999,.006],[1.2999,.008],[1.3,.01]],
+    A: [[.9,0],[.9499,.0024],[.9999,.0027],[1.0999,.004],[1.2999,.0055],[1.3,.0065]],
+    B: [[.9,0],[.9499,.00312],[.9999,.00351],[1.0999,.0052],[1.2999,.00715],[1.3,.00845]],
+    C: [[.9,0],[.9499,.004056],[.9999,.004563],[1.0999,.00676],[1.2999,.009295],[1.3,.010985]],
   },
   "EXPLORER": {
-    A: [[.9,0],[.9499,.0055],[.9999,.0065],[1.0999,.0075],[1.2999,.009],[1.3,.01]],
-    B: [[.9,0],[.9499,.007], [.9999,.009], [1.0999,.01],  [1.2999,.01], [1.3,.012]],
+    A: [[.9,0],[.9499,.0045],[.9999,.0055],[1.0999,.006],[1.2999,.008],[1.3,.009]],
+    B: [[.9,0],[.9499,.006], [.9999,.008], [1.0999,.009],[1.2999,.01], [1.3,.012]],
+    C: [[.9,0],[.9499,.008], [.9999,.009], [1.0999,.01], [1.2999,.011],[1.3,.0115]],
+    D: [[.9,0],[.9499,.011], [.9999,.0115],[1.0999,.012],[1.2999,.013],[1.3,.014]],
+  },
+  "TAF": {
+    A: [[.9,0],[.9499,.009],[.9999,.0099],[1.0999,.01287],[1.2999,.016731],[1.3,.0217503]],
+    B: [[.9,0],[.9499,.0105],[.9999,.0114],[1.0999,.01437],[1.2999,.018231],[1.3,.0232503]],
   },
 };
 const T70_FLAT = {
   "TELESHOP":     [[.9,0],[.9499,.009], [.9999,.01], [1.0999,.015],[1.2999,.017],[1.3,.02]],
-  "TAF":          [[.9,0],[.9499,.01],  [.9999,.0105],[1.0999,.011],[1.2999,.013],[1.3,.015]],
-  "PUMA":         [[.9,0],[.9499,.01],  [.9999,.0105],[1.0999,.011],[1.2999,.013],[1.3,.015]],
+  "PUMA":         [[.9,0],[.9499,.009], [.9999,.0099],[1.0999,.01287],[1.2999,.016731],[1.3,.0217503]],
   "UNDER ARMOUR": [[.9,0],[.9499,.007], [.9999,.008], [1.0999,.011],[1.2999,.013],[1.3,.015]],
   "CIKLA":        [[.9,0],[.9499,.0035],[.9999,.005], [1.0999,.008],[1.2999,.012],[1.3,.018]],
   "BIG HEAD":     [[.9,0],[.9499,.007], [.9999,.008], [1.0999,.011],[1.2999,.013],[1.3,.015]],
@@ -41,6 +46,12 @@ const TNA_CLUSTER = {
     "EXPLORER": {
       A:[[0,0],[0.9,0.002],[0.9501,0.003],[1,0.004],[1.1,0.005],[1.3,0.006]],
       B:[[0,0],[0.9,0.0025],[0.9501,0.0035],[1,0.0045],[1.1,0.0055],[1.3,0.0065]],
+      C:[[0,0],[0.9,0.002],[0.9501,0.003],[1,0.004],[1.1,0.005],[1.3,0.006]],
+      D:[[0,0],[0.9,0.002],[0.9501,0.003],[1,0.004],[1.1,0.005],[1.3,0.006]],
+    },
+    "TAF": {
+      A:[[0,0],[0.9,0.005],[0.9501,0.006],[1,0.007],[1.1,0.008],[1.3,0.009]],
+      B:[[0,0],[0.9,0.0055],[0.9501,0.0066],[1,0.0077],[1.1,0.0088],[1.3,0.0099]],
     },
   },
   "SUBJEFE DE ALMACEN": {
@@ -52,6 +63,12 @@ const TNA_CLUSTER = {
     "EXPLORER": {
       A:[[0,0],[0.9,0.0016],[0.9501,0.0024],[1,0.0032],[1.1,0.004],[1.3,0.0048]],
       B:[[0,0],[0.9,0.002],[0.9501,0.0028],[1,0.0036],[1.1,0.0044],[1.3,0.0052]],
+      C:[[0,0],[0.9,0.002],[0.9501,0.0028],[1,0.0036],[1.1,0.0044],[1.3,0.0052]],
+      D:[[0,0],[0.9,0.0016],[0.9501,0.0024],[1,0.0032],[1.1,0.004],[1.3,0.0048]],
+    },
+    "TAF": {
+      A:[[0,0],[0.9,0.004],[0.9501,0.0048],[1,0.0056],[1.1,0.0064],[1.3,0.0072]],
+      B:[[0,0],[0.9,0.0044],[0.9501,0.00528],[1,0.00616],[1.1,0.00704],[1.3,0.00792]],
     },
   },
   "CAJERO": {
@@ -82,9 +99,8 @@ const TNA_FLAT = {
     "OUTLET":[[0,0],[0.9,0.0015],[0.9501,0.0025],[1,0.0035],[1.1,0.0045],[1.3,0.0055]],
     "BODEGA DEPORTIVA":[[0,0],[0.9,0.0015],[0.9501,0.0025],[1,0.0035],[1.1,0.0045],[1.3,0.005]],
     "TELESHOP":[[0,0],[0.9,0.002],[0.9501,0.004],[1,0.006],[1.1,0.008],[1.3,0.01]],
-    "TAF":[[0,0],[0.9,0.003],[0.9501,0.004],[1,0.005],[1.1,0.006],[1.3,0.007]],
-    "PUMA":[[0,0],[0.9,0.003],[0.9501,0.004],[1,0.005],[1.1,0.006],[1.3,0.007]],
-    "UNDER ARMOUR":[[0,0],[0.9,0.003],[0.9501,0.004],[1,0.005],[1.1,0.006],[1.3,0.007]],
+    "PUMA":[[0,0],[0.9,0.005],[0.9501,0.006],[1,0.007],[1.1,0.008],[1.3,0.009]],
+    "UNDER ARMOUR":[[0,0],[0.9,0.005],[0.9501,0.006],[1,0.007],[1.1,0.008],[1.3,0.009]],
     "CIKLA":[[0,0],[0.9,0.00005],[0.9501,0.0002],[1,0.0004],[1.1,0.0006],[1.3,0.01]],
     "BIG HEAD":[[0,0],[0.9,0.0015],[0.9501,0.003],[1,0.004],[1.1,0.005],[1.3,0.006]],
     "JANSPORT":[[0,0],[0.9,0.00005],[0.9501,0.0002],[1,0.0004],[1.1,0.0006],[1.3,0.01]],
@@ -93,9 +109,8 @@ const TNA_FLAT = {
     "OUTLET":[[0,0],[0.9,0.0012],[0.9501,0.002],[1,0.0028],[1.1,0.0036],[1.3,0.0044]],
     "BODEGA DEPORTIVA":[[0,0],[0.9,0.0012],[0.9501,0.002],[1,0.0028],[1.1,0.0036],[1.3,0.004]],
     "TELESHOP":[[0,0],[0.9,0.0016],[0.9501,0.0032],[1,0.0048],[1.1,0.0064],[1.3,0.008]],
-    "TAF":[[0,0],[0.9,0.0024],[0.9501,0.0032],[1,0.004],[1.1,0.0048],[1.3,0.0056]],
-    "PUMA":[[0,0],[0.9,0.0024],[0.9501,0.0032],[1,0.004],[1.1,0.0048],[1.3,0.0056]],
-    "UNDER ARMOUR":[[0,0],[0.9,0.0024],[0.9501,0.0032],[1,0.004],[1.1,0.0048],[1.3,0.0056]],
+    "PUMA":[[0,0],[0.9,0.004],[0.9501,0.0048],[1,0.0056],[1.1,0.0064],[1.3,0.0072]],
+    "UNDER ARMOUR":[[0,0],[0.9,0.004],[0.9501,0.0048],[1,0.0056],[1.1,0.0064],[1.3,0.0072]],
     "CIKLA":[[0,0],[0.9,0.00005],[0.9501,0.00055],[1,0.00105],[1.1,0.00155],[1.3,0.00205]],
     "BIG HEAD":[[0,0],[0.9,0.0012],[0.9501,0.0024],[1,0.0032],[1.1,0.004],[1.3,0.0048]],
     "JANSPORT":[[0,0],[0.9,0.00004],[0.9501,0.00016],[1,0.00032],[1.1,0.00048],[1.3,0.008]],
@@ -180,24 +195,36 @@ const TIENDAS = [
   {n:"MARATHON SPORTS SAN LUIS SHOPPING", con:"MARATHON SPORTS", cl:"A"},
   {n:"MARATHON SPORTS SAN MARINO", con:"MARATHON SPORTS", cl:"A"},
   {n:"MARATHON SPORTS SCALA SHOPPING", con:"MARATHON SPORTS", cl:"A"},
-  {n:"EXPLORER CONDADO SHOPPING", con:"EXPLORER", cl:"A"},
-  {n:"EXPLORER EL BOSQUE", con:"EXPLORER", cl:"A"},
-  {n:"EXPLORER EL PORTAL", con:"EXPLORER", cl:"A"},
+  {n:"EXPLORER CONDADO SHOPPING", con:"EXPLORER", cl:"C"},
+  {n:"EXPLORER EL BOSQUE", con:"EXPLORER", cl:"D"},
+  {n:"EXPLORER EL PORTAL", con:"EXPLORER", cl:"D"},
   {n:"EXPLORER EL RECREO", con:"EXPLORER", cl:"B"},
-  {n:"EXPLORER LAGUNA MALL", con:"EXPLORER", cl:"A"},
-  {n:"EXPLORER MALL DE LOS ANDES", con:"EXPLORER", cl:"A"},
-  {n:"EXPLORER MALL DEL RIO", con:"EXPLORER", cl:"A"},
-  {n:"EXPLORER MALL DEL SOL", con:"EXPLORER", cl:"A"},
-  {n:"EXPLORER MALL EL JARDIN", con:"EXPLORER", cl:"A"},
-  {n:"EXPLORER MALTERIA PLAZA", con:"EXPLORER", cl:"A"},
-  {n:"EXPLORER MULTIPLAZA LA PRADERA", con:"EXPLORER", cl:"A"},
-  {n:"EXPLORER PASEO SHOPPING RIOBAMBA", con:"EXPLORER", cl:"A"},
-  {n:"EXPLORER POLICENTRO", con:"EXPLORER", cl:"B"},
+  {n:"EXPLORER LAGUNA MALL", con:"EXPLORER", cl:"B"},
+  {n:"EXPLORER MALL DE LOS ANDES", con:"EXPLORER", cl:"D"},
+  {n:"EXPLORER MALL DEL RIO", con:"EXPLORER", cl:"B"},
+  {n:"EXPLORER MALL DEL SOL", con:"EXPLORER", cl:"B"},
+  {n:"EXPLORER MALL EL JARDIN", con:"EXPLORER", cl:"B"},
+  {n:"EXPLORER MALTERIA PLAZA", con:"EXPLORER", cl:"C"},
+  {n:"EXPLORER MULTIPLAZA LA PRADERA", con:"EXPLORER", cl:"C"},
+  {n:"EXPLORER PASEO SHOPPING RIOBAMBA", con:"EXPLORER", cl:"C"},
+  {n:"EXPLORER POLICENTRO", con:"EXPLORER", cl:"C"},
   {n:"EXPLORER QUICENTRO SHOPPING", con:"EXPLORER", cl:"A"},
-  {n:"EXPLORER RIOCENTRO SHOPPING QUITO", con:"EXPLORER", cl:"B"},
-  {n:"EXPLORER SAN LUIS SHOPPING", con:"EXPLORER", cl:"A"},
-  {n:"EXPLORER SCALA SHOPPING", con:"EXPLORER", cl:"A"},
-  {n:"EXPLORER VENTURA MALL", con:"EXPLORER", cl:"B"},
+  {n:"EXPLORER RIOCENTRO SHOPPING QUITO", con:"EXPLORER", cl:"D"},
+  {n:"EXPLORER SAN LUIS SHOPPING", con:"EXPLORER", cl:"C"},
+  {n:"EXPLORER SCALA SHOPPING", con:"EXPLORER", cl:"B"},
+  {n:"EXPLORER VENTURA MALL", con:"EXPLORER", cl:"D"},
+  {n:"TAF CONDADO SHOPPING", con:"TAF", cl:"A"},
+  {n:"TAF EL BOSQUE", con:"TAF", cl:"B"},
+  {n:"TAF EL PORTAL", con:"TAF", cl:"A"},
+  {n:"TAF MALL DEL NORTE", con:"TAF", cl:"B"},
+  {n:"TAF MALL DEL PACIFICO", con:"TAF", cl:"A"},
+  {n:"TAF MALL DEL SOL", con:"TAF", cl:"A"},
+  {n:"TAF MALL DEL SUR", con:"TAF", cl:"B"},
+  {n:"TAF MALL EL JARDIN", con:"TAF", cl:"A"},
+  {n:"TAF POLICENTRO", con:"TAF", cl:"B"},
+  {n:"TAF QUICENTRO SUR", con:"TAF", cl:"A"},
+  {n:"TAF RIOCENTRO SHOPPING QUITO", con:"TAF", cl:"B"},
+  {n:"TAF SCALA SHOPPING MALL", con:"TAF", cl:"A"},
 ];
 
 const CONCEPTOS_FLAT = [
@@ -207,7 +234,7 @@ const CONCEPTOS_FLAT = [
   {id:"BIG HEAD",lbl:"Big Head"},{id:"JANSPORT",lbl:"Jansport"},
   {id:"OUTLET",lbl:"Outlet"},{id:"BODEGA DEPORTIVA",lbl:"Bodega Deportiva"},
 ];
-const CON_TIENDAS = ["MARATHON SPORTS","EXPLORER"]; // conceptos que requieren elegir tienda
+const CON_TIENDAS = ["MARATHON SPORTS","EXPLORER","TAF"]; // conceptos que requieren elegir tienda
 
 const CARGOS = [
   {id:"ASESOR DE VENTAS",lbl:"Asesor",pin:false},
@@ -233,7 +260,7 @@ function tasaAsesor70(concepto, cluster, cumpl) {
   return porHasta(T70_FLAT[concepto], cumpl);
 }
 function tasaNA(cargo, concepto, cluster, cumpl) {
-  if (cluster && TNA_CLUSTER[cargo] && TNA_CLUSTER[cargo][concepto]) {
+  if (cluster && TNA_CLUSTER[cargo] && TNA_CLUSTER[cargo][concepto] && TNA_CLUSTER[cargo][concepto][cluster]) {
     return porDesde(TNA_CLUSTER[cargo][concepto][cluster], cumpl);
   }
   const flat = TNA_FLAT[cargo] || {};
