@@ -284,7 +284,7 @@ function calc({concepto,cluster,cargo,metaA,ventaA,tiendaOk,ventaT,metaT,rangoT,
     let cumplT=null, vt=parseFloat(ventaT)||0;
     if(metaT&&ventaT){const mt=parseFloat(metaT)||0;if(mt>0&&vt>0)cumplT=vt/mt;}else if(rangoT)cumplT=RANGO_V[rangoT];
     if(cumplT===null) return null;
-    const tasa=porDesde(TBD[concepto],cumplT)*.8, bono=margen?30:0;
+    const tasa=porDesde(TBD[concepto],cumplT)*.8, bono=0; // Outlet y Bodega Deportiva no tienen bono de margen bruto
     if(vt>0) return {tipo:"tienda",comInd:0,comTienda:vt*tasa,bono,total:vt*tasa+bono,cumplT,tasa};
     return {tipo:"soloTasa",tasa,cumplT,bono};
   }
@@ -577,7 +577,6 @@ export default function App(){
                     {cumplT!=null&&metaT&&(<><div style={{display:"flex",justifyContent:"space-between",fontSize:14,color:C.mut}}><span>Cumplimiento tienda</span><span style={{color:C.b2,fontWeight:600}}>{(cumplT*100).toFixed(1)}%</span></div><NivelBar cumpl={cumplT} is7030={false}/></>)}
                     <div style={{color:C.mut,fontSize:11,textTransform:"uppercase",letterSpacing:".07em",margin:"12px 0"}}>— o elige el nivel —</div>
                     <Rango val={rangoT} set={r=>{setRangoT(r);setMetaT("");if(r)setVentaT("");}}/>
-                    <div style={{marginTop:20}}><Tog lbl="¿Margen Bruto ≥ 100%? (+$30)" val={margen} set={setMargen} note="Bono fijo que aplica a tu cargo."/></div>
                   </>
                 )}
                 {noAse&&(
