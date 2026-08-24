@@ -569,7 +569,6 @@ export default function App(){
                 )}
                 {esBD&&(
                   <>
-                    <div style={{background:`${C.b1}12`,borderRadius:10,padding:"14px 16px",marginBottom:20,fontSize:14,color:"#90CAF9",border:`1px solid ${C.b1}20`}}>En {concepto}, tu comisión se calcula sobre las ventas de la tienda.</div>
                     <div style={{display:"flex",flexWrap:"wrap",gap:14}}>
                       <div style={{flex:"1 1 130px",minWidth:0}}><Dinero lbl="Venta de la tienda" val={ventaT} set={v=>{setVentaT(v);setRangoT(null);}} note="Opcional"/></div>
                       <div style={{flex:"1 1 130px",minWidth:0}}><Dinero lbl="Meta de la tienda" val={metaT} set={v=>{setMetaT(v);setRangoT(null);}} note="Opcional"/></div>
