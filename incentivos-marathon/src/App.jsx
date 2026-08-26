@@ -235,6 +235,16 @@ const CONCEPTOS_FLAT = [
   {id:"OUTLET",lbl:"Outlet"},{id:"BODEGA DEPORTIVA",lbl:"Bodega Deportiva"},
 ];
 const CON_TIENDAS = ["MARATHON SPORTS","EXPLORER","TAF"]; // conceptos que requieren elegir tienda
+const MARCA_PIN = {
+  "TELESHOP": "62950",
+  "PUMA": "59906",
+  "UNDER ARMOUR": "36224",
+  "CIKLA": "88569",
+  "BIG HEAD": "33435",
+  "JANSPORT": "40180",
+  "OUTLET": "42562",
+  "BODEGA DEPORTIVA": "27464",
+};
 
 const TIENDA_PIN = {
   "MARATHON SPORTS 9 DE OCTUBRE": "93810",
@@ -481,6 +491,10 @@ export default function App(){
   const[tiendaPendiente,setTiendaPendiente]=useState(null); // tienda elegida, esperando PIN
   const[pinTienda,setPinTienda]=useState("");
   const[pinTiendaErr,setPinTiendaErr]=useState(false);
+  const[marcaPendiente,setMarcaPendiente]=useState(null); // marca sin cluster, esperando PIN
+  const[pinMarca,setPinMarca]=useState("");
+  const[pinMarcaErr,setPinMarcaErr]=useState(false);
+  const[marcaOk,setMarcaOk]=useState(null); // marca ya desbloqueada esta sesion
   const[conceptoFlat,setConceptoFlat]=useState(null); // string si es otro concepto
   const[pin,setPin]=useState("");
   const[pinOk,setPinOk]=useState(false);
@@ -504,6 +518,19 @@ export default function App(){
       setTienda(tiendaPendiente);setTiendaPendiente(null);setPinTiendaErr(false);reset();
     }else{
       setPinTiendaErr(true);
+    }
+  };
+
+  const elegirMarca=id=>{
+    if(CON_TIENDAS.includes(id)){setConceptoFlat(id);setTienda(null);reset();return;}
+    if(marcaOk===id){setConceptoFlat(id);setTienda(null);reset();return;}
+    setMarcaPendiente(id);setPinMarca("");setPinMarcaErr(false);
+  };
+  const submitPinMarca=()=>{
+    if(marcaPendiente&&pinMarca===MARCA_PIN[marcaPendiente]){
+      setMarcaOk(marcaPendiente);setConceptoFlat(marcaPendiente);setTienda(null);setMarcaPendiente(null);setPinMarcaErr(false);reset();
+    }else{
+      setPinMarcaErr(true);
     }
   };
 
@@ -612,7 +639,7 @@ export default function App(){
             <div style={{color:C.mut,fontSize:12,textTransform:"uppercase",letterSpacing:".1em",marginBottom:16}}>¿En qué marca trabajas?</div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(130px, 1fr))",gap:8}}>
               {CONCEPTOS_FLAT.map(con=>{const a=conceptoFlat===con.id;return(
-                <button key={con.id} onClick={()=>{setConceptoFlat(con.id);setTienda(null);reset();}} style={{padding:"14px 12px",borderRadius:14,cursor:"pointer",fontFamily:"inherit",fontSize:"clamp(12px,3.2vw,15px)",transition:"all .2s",textAlign:"left",border:a?`1px solid ${C.b1}`:`1px solid ${C.b0}`,background:a?`${C.b1}22`:"transparent",color:a?C.whi:C.mut,fontWeight:a?600:400,minWidth:0}}>
+                <button key={con.id} onClick={()=>elegirMarca(con.id)} style={{padding:"14px 12px",borderRadius:14,cursor:"pointer",fontFamily:"inherit",fontSize:"clamp(12px,3.2vw,15px)",transition:"all .2s",textAlign:"left",border:a?`1px solid ${C.b1}`:`1px solid ${C.b0}`,background:a?`${C.b1}22`:"transparent",color:a?C.whi:C.mut,fontWeight:a?600:400,minWidth:0}}>
                   {con.lbl}
                 </button>);})}
             </div>
@@ -648,6 +675,26 @@ export default function App(){
               </div>
               {pinTiendaErr&&<p style={{color:"#EF5350",fontSize:13,margin:"10px 0 0"}}>PIN incorrecto</p>}
               <button onClick={()=>setTiendaPendiente(null)} style={{marginTop:16,background:"none",border:"none",color:C.mut,fontSize:13,cursor:"pointer",fontFamily:"inherit",width:"100%"}}>Cancelar</button>
+            </div>
+          </div>
+        )}
+
+        {/* PIN DE MARCA — se pide al elegir marcas sin cluster (Puma, Big Head, etc) */}
+        {marcaPendiente&&(
+          <div onClick={()=>setMarcaPendiente(null)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.7)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:100,padding:20,boxSizing:"border-box"}}>
+            <div onClick={e=>e.stopPropagation()} style={{background:C.surf,borderRadius:16,padding:"28px 24px",width:"100%",maxWidth:360,boxSizing:"border-box",border:`1px solid ${C.b0}`}}>
+              <p style={{color:C.mut,fontSize:12,textTransform:"uppercase",letterSpacing:".08em",margin:"0 0 6px"}}>{marcaPendiente}</p>
+              <p style={{color:C.whi,fontWeight:700,fontSize:18,margin:"0 0 16px",fontFamily:"Barlow Condensed,sans-serif"}}>Ingresa el PIN de tu marca</p>
+              <div style={{display:"flex",gap:8}}>
+                <input type="password" inputMode="numeric" maxLength={5} value={pinMarca}
+                  onChange={e=>{setPinMarca(e.target.value.replace(/\D/g,""));setPinMarcaErr(false);}}
+                  onKeyDown={e=>e.key==="Enter"&&submitPinMarca()}
+                  placeholder="•••••" autoFocus
+                  style={{flex:1,minWidth:0,background:C.card,border:`1px solid ${pinMarcaErr?"#EF5350":C.b0}`,borderRadius:12,padding:"14px 16px",color:C.whi,fontSize:20,letterSpacing:"4px",textAlign:"center",outline:"none",fontFamily:"inherit",boxSizing:"border-box"}}/>
+                <button onClick={submitPinMarca} style={{background:C.b1,color:"#fff",border:"none",borderRadius:12,padding:"14px 20px",cursor:"pointer",fontFamily:"inherit",fontWeight:600,fontSize:18,flexShrink:0}}>→</button>
+              </div>
+              {pinMarcaErr&&<p style={{color:"#EF5350",fontSize:13,margin:"10px 0 0"}}>PIN incorrecto</p>}
+              <button onClick={()=>setMarcaPendiente(null)} style={{marginTop:16,background:"none",border:"none",color:C.mut,fontSize:13,cursor:"pointer",fontFamily:"inherit",width:"100%"}}>Cancelar</button>
             </div>
           </div>
         )}
