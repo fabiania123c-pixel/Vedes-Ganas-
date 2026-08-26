@@ -652,7 +652,8 @@ export default function App(){
           </div>
         )}
 
-
+        {/* SIN INCENTIVO */}
+        {cargo&&listoParaInputs&&sinIV&&(
           <div style={{marginBottom:"clamp(24px,6vw,40px)",background:C.surf,borderRadius:16,padding:"clamp(24px,6vw,32px)",border:`1px solid ${C.b0}`,textAlign:"center",boxSizing:"border-box"}}>
             <p style={{color:C.sof,fontSize:"clamp(15px,4vw,18px)",margin:0,fontWeight:500}}>Este cargo no tiene incentivo variable en el modelo 2026.</p>
           </div>
