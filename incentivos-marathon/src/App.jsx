@@ -236,6 +236,85 @@ const CONCEPTOS_FLAT = [
 ];
 const CON_TIENDAS = ["MARATHON SPORTS","EXPLORER","TAF"]; // conceptos que requieren elegir tienda
 
+const TIENDA_PIN = {
+  "MARATHON SPORTS 9 DE OCTUBRE": "93810",
+  "MARATHON SPORTS BAHIA DE CARAQUEZ": "24592",
+  "MARATHON SPORTS BOMBOLI SHOPPING": "13278",
+  "MARATHON SPORTS CITY MALL": "46048",
+  "MARATHON SPORTS COLON": "42098",
+  "MARATHON SPORTS CONDADO SHOPPING": "39256",
+  "MARATHON SPORTS EL BOSQUE": "28289",
+  "MARATHON SPORTS EL PORTAL": "23434",
+  "MARATHON SPORTS EL RECREO": "98696",
+  "MARATHON SPORTS IÑAQUITO": "81482",
+  "MARATHON SPORTS LAGUNA MALL": "21395",
+  "MARATHON SPORTS MALL DE LOS ANDES": "87397",
+  "MARATHON SPORTS MALL DEL ALTO": "65302",
+  "MARATHON SPORTS MALL DEL NORTE": "14165",
+  "MARATHON SPORTS MALL DEL PACIFICO": "13905",
+  "MARATHON SPORTS MALL DEL RIO": "22280",
+  "MARATHON SPORTS MALL DEL SOL": "38657",
+  "MARATHON SPORTS MALL DEL SUR": "40495",
+  "MARATHON SPORTS MALL EL JARDIN": "76237",
+  "MARATHON SPORTS MALTERIA PLAZA": "88907",
+  "MARATHON SPORTS MULTIPLAZA": "13478",
+  "MARATHON SPORTS MULTIPLAZA LA PRADERA": "83563",
+  "MARATHON SPORTS PASEO LA PENINSULA": "36062",
+  "MARATHON SPORTS PASEO MACHALA": "95181",
+  "MARATHON SPORTS PASEO PORTOVIEJO": "81426",
+  "MARATHON SPORTS PASEO SAN FRANCISCO": "64987",
+  "MARATHON SPORTS PASEO SANTO DOMINGO": "38893",
+  "MARATHON SPORTS PASEO SHOPPING AMBATO": "68878",
+  "MARATHON SPORTS PASEO SHOPPING BABAHOYO": "87236",
+  "MARATHON SPORTS PASEO SHOPPING DAULE": "46463",
+  "MARATHON SPORTS PASEO SHOPPING MANTA": "10851",
+  "MARATHON SPORTS PASEO SHOPPING MILAGRO": "30926",
+  "MARATHON SPORTS PASEO SHOPPING PLAYAS": "65392",
+  "MARATHON SPORTS PASEO SHOPPING QUEVEDO": "54597",
+  "MARATHON SPORTS PLAZA SHOPPING CENTER": "46421",
+  "MARATHON SPORTS POLICENTRO": "30379",
+  "MARATHON SPORTS QUICENTRO SHOPPING": "38221",
+  "MARATHON SPORTS QUICENTRO SUR": "54118",
+  "MARATHON SPORTS RIOBAMBA": "23396",
+  "MARATHON SPORTS RIOCENTRO EL DORADO": "22156",
+  "MARATHON SPORTS RIOCENTRO ENTRE RIOS": "59797",
+  "MARATHON SPORTS RIOCENTRO LOS CEIBOS": "22676",
+  "MARATHON SPORTS RIOCENTRO NORTE": "57052",
+  "MARATHON SPORTS SAN LUIS SHOPPING": "55082",
+  "MARATHON SPORTS SAN MARINO": "89131",
+  "MARATHON SPORTS SCALA SHOPPING": "44671",
+  "EXPLORER CONDADO SHOPPING": "15695",
+  "EXPLORER EL BOSQUE": "70217",
+  "EXPLORER EL PORTAL": "80284",
+  "EXPLORER EL RECREO": "26361",
+  "EXPLORER LAGUNA MALL": "59615",
+  "EXPLORER MALL DE LOS ANDES": "20328",
+  "EXPLORER MALL DEL RIO": "82357",
+  "EXPLORER MALL DEL SOL": "48427",
+  "EXPLORER MALL EL JARDIN": "92397",
+  "EXPLORER MALTERIA PLAZA": "91070",
+  "EXPLORER MULTIPLAZA LA PRADERA": "57400",
+  "EXPLORER PASEO SHOPPING RIOBAMBA": "85674",
+  "EXPLORER POLICENTRO": "35203",
+  "EXPLORER QUICENTRO SHOPPING": "19116",
+  "EXPLORER RIOCENTRO SHOPPING QUITO": "16006",
+  "EXPLORER SAN LUIS SHOPPING": "96673",
+  "EXPLORER SCALA SHOPPING": "39871",
+  "EXPLORER VENTURA MALL": "47930",
+  "TAF CONDADO SHOPPING": "20458",
+  "TAF EL BOSQUE": "40512",
+  "TAF EL PORTAL": "23238",
+  "TAF MALL DEL NORTE": "59823",
+  "TAF MALL DEL PACIFICO": "46434",
+  "TAF MALL DEL SOL": "69429",
+  "TAF MALL DEL SUR": "93320",
+  "TAF MALL EL JARDIN": "57819",
+  "TAF POLICENTRO": "31319",
+  "TAF QUICENTRO SUR": "58520",
+  "TAF RIOCENTRO SHOPPING QUITO": "56566",
+  "TAF SCALA SHOPPING MALL": "37460",
+};
+
 const CARGOS = [
   {id:"ASESOR DE VENTAS",lbl:"Asesor",pin:false},
   {id:"CAJERO",lbl:"Cajero",pin:false},
@@ -399,6 +478,9 @@ export default function App(){
 
   const[cargo,setCargo]=useState(null);
   const[tienda,setTienda]=useState(null);       // {n, con, cl} si es Marathon/Explorer
+  const[tiendaPendiente,setTiendaPendiente]=useState(null); // tienda elegida, esperando PIN
+  const[pinTienda,setPinTienda]=useState("");
+  const[pinTiendaErr,setPinTiendaErr]=useState(false);
   const[conceptoFlat,setConceptoFlat]=useState(null); // string si es otro concepto
   const[pin,setPin]=useState("");
   const[pinOk,setPinOk]=useState(false);
@@ -415,6 +497,15 @@ export default function App(){
   const reset=()=>{setMetaA("");setVentaA("");setTiendaOk(false);setVentaT("");setMetaT("");setRangoT(null);setMargen(false);};
   const selCargo=c=>{if(c.pin&&!pinOk){setCargo(c);setShowPin(true);return;}setCargo(c);setShowPin(false);reset();};
   const submitPin=()=>{if(pin===PIN){setPinOk(true);setPinErr(false);setShowPin(false);reset();}else setPinErr(true);};
+
+  const elegirTienda=t=>{setTiendaPendiente(t);setPinTienda("");setPinTiendaErr(false);};
+  const submitPinTienda=()=>{
+    if(tiendaPendiente&&pinTienda===TIENDA_PIN[tiendaPendiente.n]){
+      setTienda(tiendaPendiente);setTiendaPendiente(null);setPinTiendaErr(false);reset();
+    }else{
+      setPinTiendaErr(true);
+    }
+  };
 
   const necesitaTienda = conceptoFlat && CON_TIENDAS.includes(conceptoFlat);
   const concepto = necesitaTienda ? (tienda?tienda.con:null) : conceptoFlat;
@@ -534,15 +625,34 @@ export default function App(){
             <div style={{color:C.mut,fontSize:12,textTransform:"uppercase",letterSpacing:".1em",marginBottom:16}}>¿Cuál es tu tienda?</div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(150px, 1fr))",gap:8}}>
               {TIENDAS.filter(t=>t.con===conceptoFlat).map(t=>{const a=tienda?.n===t.n;return(
-                <button key={t.n} onClick={()=>{setTienda(t);reset();}} style={{padding:"12px 12px",borderRadius:12,cursor:"pointer",fontFamily:"inherit",fontSize:"clamp(11px,3vw,13px)",transition:"all .2s",textAlign:"left",border:a?`1px solid ${C.b1}`:`1px solid ${C.b0}`,background:a?`${C.b1}22`:"transparent",color:a?C.whi:C.mut,fontWeight:a?600:400,minWidth:0}}>
+                <button key={t.n} onClick={()=>elegirTienda(t)} style={{padding:"12px 12px",borderRadius:12,cursor:"pointer",fontFamily:"inherit",fontSize:"clamp(11px,3vw,13px)",transition:"all .2s",textAlign:"left",border:a?`1px solid ${C.b1}`:`1px solid ${C.b0}`,background:a?`${C.b1}22`:"transparent",color:a?C.whi:C.mut,fontWeight:a?600:400,minWidth:0}}>
                   {t.n.replace(t.con+" ","")}
                 </button>);})}
             </div>
           </div>
         )}
 
-        {/* SIN INCENTIVO */}
-        {cargo&&listoParaInputs&&sinIV&&(
+        {/* PIN DE TIENDA — se pide al elegir cualquier tienda */}
+        {tiendaPendiente&&(
+          <div onClick={()=>setTiendaPendiente(null)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.7)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:100,padding:20,boxSizing:"border-box"}}>
+            <div onClick={e=>e.stopPropagation()} style={{background:C.surf,borderRadius:16,padding:"28px 24px",width:"100%",maxWidth:360,boxSizing:"border-box",border:`1px solid ${C.b0}`}}>
+              <p style={{color:C.mut,fontSize:12,textTransform:"uppercase",letterSpacing:".08em",margin:"0 0 6px"}}>{tiendaPendiente.n}</p>
+              <p style={{color:C.whi,fontWeight:700,fontSize:18,margin:"0 0 16px",fontFamily:"Barlow Condensed,sans-serif"}}>Ingresa el PIN de tu tienda</p>
+              <div style={{display:"flex",gap:8}}>
+                <input type="password" inputMode="numeric" maxLength={5} value={pinTienda}
+                  onChange={e=>{setPinTienda(e.target.value.replace(/\D/g,""));setPinTiendaErr(false);}}
+                  onKeyDown={e=>e.key==="Enter"&&submitPinTienda()}
+                  placeholder="•••••" autoFocus
+                  style={{flex:1,minWidth:0,background:C.card,border:`1px solid ${pinTiendaErr?"#EF5350":C.b0}`,borderRadius:12,padding:"14px 16px",color:C.whi,fontSize:20,letterSpacing:"4px",textAlign:"center",outline:"none",fontFamily:"inherit",boxSizing:"border-box"}}/>
+                <button onClick={submitPinTienda} style={{background:C.b1,color:"#fff",border:"none",borderRadius:12,padding:"14px 20px",cursor:"pointer",fontFamily:"inherit",fontWeight:600,fontSize:18,flexShrink:0}}>→</button>
+              </div>
+              {pinTiendaErr&&<p style={{color:"#EF5350",fontSize:13,margin:"10px 0 0"}}>PIN incorrecto</p>}
+              <button onClick={()=>setTiendaPendiente(null)} style={{marginTop:16,background:"none",border:"none",color:C.mut,fontSize:13,cursor:"pointer",fontFamily:"inherit",width:"100%"}}>Cancelar</button>
+            </div>
+          </div>
+        )}
+
+
           <div style={{marginBottom:"clamp(24px,6vw,40px)",background:C.surf,borderRadius:16,padding:"clamp(24px,6vw,32px)",border:`1px solid ${C.b0}`,textAlign:"center",boxSizing:"border-box"}}>
             <p style={{color:C.sof,fontSize:"clamp(15px,4vw,18px)",margin:0,fontWeight:500}}>Este cargo no tiene incentivo variable en el modelo 2026.</p>
           </div>
