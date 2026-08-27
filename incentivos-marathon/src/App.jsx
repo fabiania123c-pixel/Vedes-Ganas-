@@ -375,7 +375,8 @@ function calc({concepto,cluster,cargo,metaA,ventaA,tiendaOk,ventaT,metaT,rangoT,
   let cumplT=null, vt=parseFloat(ventaT)||0;
   if(metaT&&ventaT){const mt=parseFloat(metaT)||0;if(mt>0&&vt>0)cumplT=vt/mt;}else if(rangoT)cumplT=RANGO_V[rangoT];
   if(cumplT===null) return null;
-  const tasa=tasaNA(cargo,concepto,cluster,cumplT), bono=margen?(BONO_NA[cargo]||0):0;
+  const sinBonoMargen = concepto==="OUTLET" || concepto==="BODEGA DEPORTIVA";
+  const tasa=tasaNA(cargo,concepto,cluster,cumplT), bono=(margen&&!sinBonoMargen)?(BONO_NA[cargo]||0):0;
   if(vt>0) return {tipo:"tienda",comInd:0,comTienda:vt*tasa,bono,total:vt*tasa+bono,cumplT,tasa};
   return {tipo:"soloTasa",tasa,cumplT,bono};
 }
@@ -539,7 +540,7 @@ export default function App(){
   const esBD     = esAsesor && concepto && !!TBD[concepto];
   const noAse    = !esAsesor;
   const sinIV    = cargo && SIN_IV.includes(cargo.id);
-  const conBono  = cargo && ["JEFE DE ALMACEN","SUBJEFE DE ALMACEN"].includes(cargo.id);
+  const conBono  = cargo && ["JEFE DE ALMACEN","SUBJEFE DE ALMACEN"].includes(cargo.id) && concepto!=="OUTLET" && concepto!=="BODEGA DEPORTIVA";
   const needPin  = cargo?.pin && !pinOk;
 
   const resultado = useMemo(()=>{
