@@ -554,7 +554,7 @@ export default function App(){
   const noAse    = !esAsesor;
   const sinIV    = cargo && SIN_IV.includes(cargo.id);
   const conBono  = cargo && ["JEFE DE ALMACEN","SUBJEFE DE ALMACEN"].includes(cargo.id) && concepto!=="OUTLET" && concepto!=="BODEGA DEPORTIVA";
-  const needPin  = cargo?.pin && !pinOk;
+  const needPin  = cargo?.pin && !pinOk && !adminMode;
 
   const resultado = useMemo(()=>{
     if(!cargo||!concepto||!listoParaInputs||needPin||sinIV) return null;
