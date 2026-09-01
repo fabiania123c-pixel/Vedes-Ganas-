@@ -510,7 +510,7 @@ export default function App(){
   const[pinAdminErr,setPinAdminErr]=useState(false);
 
   const reset=()=>{setMetaA("");setVentaA("");setTiendaOk(false);setVentaT("");setMetaT("");setRangoT(null);setMargen(false);};
-  const selCargo=c=>{if(c.pin&&!pinOk){setCargo(c);setShowPin(true);return;}setCargo(c);setShowPin(false);reset();};
+  const selCargo=c=>{if(c.pin&&!pinOk&&!adminMode){setCargo(c);setShowPin(true);return;}setCargo(c);setShowPin(false);reset();};
   const submitPin=()=>{if(pin===PIN){setPinOk(true);setPinErr(false);setShowPin(false);reset();}else setPinErr(true);};
 
   const submitPinAdmin=()=>{
@@ -649,7 +649,7 @@ export default function App(){
           <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
             {CARGOS.map(c=>{const a=cargo?.id===c.id;return(
               <button key={c.id} onClick={()=>selCargo(c)} style={{padding:"10px 18px",borderRadius:24,cursor:"pointer",fontFamily:"inherit",fontSize:"clamp(13px,3.5vw,16px)",transition:"all .2s",border:a?"none":`1px solid ${C.b0}`,background:a?C.b1:"transparent",color:a?C.whi:C.mut,fontWeight:a?600:400,whiteSpace:"nowrap"}}>
-                {c.lbl}{c.pin&&<span style={{marginLeft:5,fontSize:11,opacity:.5}}>{pinOk?"✓":"🔒"}</span>}
+                {c.lbl}{c.pin&&<span style={{marginLeft:5,fontSize:11,opacity:.5}}>{(pinOk||adminMode)?"✓":"🔒"}</span>}
               </button>);})}
           </div>
         </div>
