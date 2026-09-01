@@ -137,6 +137,7 @@ const TNA_FLAT = {
 const BONO_NA = {"JEFE DE ALMACEN":100,"SUBJEFE DE ALMACEN":70};
 const SIN_IV  = ["AUX. DE TIENDA","MECANICO BICICLETAS"];
 const PIN     = "INCENTIVOS2026*";
+const ADMIN_PIN = "marathon*admin2026";
 const RANGOS  = ["< 90%","90–95%","95–100%","100–110%","110–130%","+130%"];
 const RANGO_V = {"< 90%":.85,"90–95%":.925,"95–100%":.975,"100–110%":1.05,"110–130%":1.20,"+130%":1.35};
 
@@ -503,12 +504,24 @@ export default function App(){
   const[metaT,setMetaT]=useState("");
   const[rangoT,setRangoT]=useState(null);
   const[margen,setMargen]=useState(false);
+  const[adminMode,setAdminMode]=useState(false);
+  const[showAdminPin,setShowAdminPin]=useState(false);
+  const[pinAdmin,setPinAdmin]=useState("");
+  const[pinAdminErr,setPinAdminErr]=useState(false);
 
   const reset=()=>{setMetaA("");setVentaA("");setTiendaOk(false);setVentaT("");setMetaT("");setRangoT(null);setMargen(false);};
   const selCargo=c=>{if(c.pin&&!pinOk){setCargo(c);setShowPin(true);return;}setCargo(c);setShowPin(false);reset();};
   const submitPin=()=>{if(pin===PIN){setPinOk(true);setPinErr(false);setShowPin(false);reset();}else setPinErr(true);};
 
-  const elegirTienda=t=>{setTiendaPendiente(t);setPinTienda("");setPinTiendaErr(false);};
+  const submitPinAdmin=()=>{
+    if(pinAdmin===ADMIN_PIN){setAdminMode(true);setShowAdminPin(false);setPinAdminErr(false);}
+    else setPinAdminErr(true);
+  };
+
+  const elegirTienda=t=>{
+    if(adminMode){setTienda(t);reset();return;}
+    setTiendaPendiente(t);setPinTienda("");setPinTiendaErr(false);
+  };
   const submitPinTienda=()=>{
     if(tiendaPendiente&&pinTienda===TIENDA_PIN[tiendaPendiente.n]){
       setTienda(tiendaPendiente);setTiendaPendiente(null);setPinTiendaErr(false);reset();
@@ -519,7 +532,7 @@ export default function App(){
 
   const elegirMarca=id=>{
     if(CON_TIENDAS.includes(id)){setConceptoFlat(id);setTienda(null);reset();return;}
-    if(marcaOk===id){setConceptoFlat(id);setTienda(null);reset();return;}
+    if(adminMode||marcaOk===id){setConceptoFlat(id);setTienda(null);reset();return;}
     setMarcaPendiente(id);setPinMarca("");setPinMarcaErr(false);
   };
   const submitPinMarca=()=>{
@@ -598,12 +611,37 @@ export default function App(){
     <div style={{minHeight:"100vh",width:"100%",background:C.bg,color:C.whi,fontFamily:"Inter,sans-serif",boxSizing:"border-box",overflowX:"hidden"}}>
       <div style={{maxWidth:900,margin:"0 auto",padding:"0 clamp(16px,5vw,40px) clamp(40px,10vw,80px)",boxSizing:"border-box"}}>
 
-        <div style={{padding:"clamp(24px,6vw,40px) 0 clamp(20px,5vw,32px)",borderBottom:`1px solid ${C.b0}`,marginBottom:"clamp(24px,6vw,40px)"}}>
-          <h1 style={{margin:0,fontFamily:"Barlow Condensed,sans-serif",fontWeight:900,fontSize:"clamp(38px,11vw,64px)",lineHeight:1,letterSpacing:"-1px"}}>
-            <span style={{color:C.b2}}>Vendes+</span><span style={{color:C.whi}}>, Ganas+</span>
-          </h1>
-          <p style={{margin:"8px 0 0",color:C.mut,fontSize:"clamp(13px,3.5vw,16px)"}}>Simulador de Incentivo Variable</p>
+        <div style={{padding:"clamp(24px,6vw,40px) 0 clamp(20px,5vw,32px)",borderBottom:`1px solid ${C.b0}`,marginBottom:"clamp(24px,6vw,40px)",display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12}}>
+          <div>
+            <h1 style={{margin:0,fontFamily:"Barlow Condensed,sans-serif",fontWeight:900,fontSize:"clamp(38px,11vw,64px)",lineHeight:1,letterSpacing:"-1px"}}>
+              <span style={{color:C.b2}}>Vendes+</span><span style={{color:C.whi}}>, Ganas+</span>
+            </h1>
+            <p style={{margin:"8px 0 0",color:C.mut,fontSize:"clamp(13px,3.5vw,16px)"}}>Simulador de Incentivo Variable</p>
+          </div>
+          {adminMode?(
+            <span style={{fontSize:11,color:C.gld,border:`1px solid ${C.gld}`,borderRadius:20,padding:"6px 12px",whiteSpace:"nowrap",flexShrink:0}}>✓ Admin</span>
+          ):(
+            <button onClick={()=>setShowAdminPin(true)} style={{background:"transparent",border:`1px solid ${C.b0}`,color:C.mut,borderRadius:20,padding:"6px 14px",fontSize:12,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap",flexShrink:0}}>Admin</button>
+          )}
         </div>
+
+        {showAdminPin&&(
+          <div onClick={()=>setShowAdminPin(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.7)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:100,padding:20,boxSizing:"border-box"}}>
+            <div onClick={e=>e.stopPropagation()} style={{background:C.surf,borderRadius:16,padding:"28px 24px",width:"100%",maxWidth:360,boxSizing:"border-box",border:`1px solid ${C.b0}`}}>
+              <p style={{color:C.whi,fontWeight:700,fontSize:18,margin:"0 0 16px",fontFamily:"Barlow Condensed,sans-serif"}}>Acceso Admin</p>
+              <div style={{display:"flex",gap:8}}>
+                <input type="password" value={pinAdmin}
+                  onChange={e=>{setPinAdmin(e.target.value);setPinAdminErr(false);}}
+                  onKeyDown={e=>e.key==="Enter"&&submitPinAdmin()}
+                  placeholder="PIN de administrador" autoFocus
+                  style={{flex:1,minWidth:0,background:C.card,border:`1px solid ${pinAdminErr?"#EF5350":C.b0}`,borderRadius:12,padding:"14px 16px",color:C.whi,fontSize:16,outline:"none",fontFamily:"inherit",boxSizing:"border-box"}}/>
+                <button onClick={submitPinAdmin} style={{background:C.b1,color:"#fff",border:"none",borderRadius:12,padding:"14px 20px",cursor:"pointer",fontFamily:"inherit",fontWeight:600,fontSize:18,flexShrink:0}}>→</button>
+              </div>
+              {pinAdminErr&&<p style={{color:"#EF5350",fontSize:13,margin:"10px 0 0"}}>PIN incorrecto</p>}
+              <button onClick={()=>setShowAdminPin(false)} style={{marginTop:16,background:"none",border:"none",color:C.mut,fontSize:13,cursor:"pointer",fontFamily:"inherit",width:"100%"}}>Cancelar</button>
+            </div>
+          </div>
+        )}
 
         {/* PASO 1 — CARGO */}
         <div style={box}>
