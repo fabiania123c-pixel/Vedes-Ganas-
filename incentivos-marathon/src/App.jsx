@@ -570,6 +570,45 @@ export default function App(){
 
   const box={marginBottom:"clamp(24px,6vw,40px)"};
 
+  const[appDesbloqueada,setAppDesbloqueada]=useState(false);
+  const[mostrarPinApp,setMostrarPinApp]=useState(false);
+  const[pinApp,setPinApp]=useState("");
+  const[pinAppErr,setPinAppErr]=useState(false);
+  const APP_LOCK_PIN = "MARATHON2026CERRADO";
+  const submitPinApp=()=>{
+    if(pinApp===APP_LOCK_PIN){setAppDesbloqueada(true);setPinAppErr(false);}
+    else setPinAppErr(true);
+  };
+
+  if(!appDesbloqueada){
+    return(
+      <div style={{minHeight:"100vh",width:"100%",background:C.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20,boxSizing:"border-box",gap:20}}>
+        <div style={{width:56,height:56,borderRadius:16,background:`${C.b1}18`,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:4}}>
+          <span style={{fontSize:26}}>🛠️</span>
+        </div>
+        <p style={{color:C.b2,fontSize:12,textTransform:"uppercase",letterSpacing:".12em",margin:0,fontWeight:600}}>Vendes+, Ganas+</p>
+        <p style={{color:C.whi,fontWeight:700,fontSize:22,margin:0,fontFamily:"Barlow Condensed,sans-serif",textAlign:"center"}}>Estamos en mantenimiento</p>
+        <p style={{color:C.mut,fontSize:14,margin:"-8px 0 4px",textAlign:"center",maxWidth:300,lineHeight:1.5}}>Estamos actualizando el simulador. Cuando esté listo podrás volver a ver tus incentivos aquí mismo.</p>
+
+        {!mostrarPinApp?(
+          <button onClick={()=>setMostrarPinApp(true)} style={{background:"none",border:"none",color:C.dim,fontSize:11,cursor:"pointer",fontFamily:"inherit",marginTop:24}}>·</button>
+        ):(
+          <>
+            <div style={{display:"flex",gap:8,width:"100%",maxWidth:320}}>
+              <input type="password" value={pinApp}
+                onChange={e=>{setPinApp(e.target.value);setPinAppErr(false);}}
+                onKeyDown={e=>e.key==="Enter"&&submitPinApp()}
+                placeholder="PIN de acceso" autoFocus
+                style={{flex:1,minWidth:0,background:C.card,border:`1px solid ${pinAppErr?"#EF5350":C.b0}`,borderRadius:12,padding:"14px 16px",color:C.whi,fontSize:16,outline:"none",fontFamily:"inherit",boxSizing:"border-box"}}/>
+              <button onClick={submitPinApp} style={{background:C.b1,color:"#fff",border:"none",borderRadius:12,padding:"14px 20px",cursor:"pointer",fontFamily:"inherit",fontWeight:600,fontSize:18,flexShrink:0}}>→</button>
+            </div>
+            {pinAppErr&&<p style={{color:"#EF5350",fontSize:13,margin:0}}>PIN incorrecto</p>}
+          </>
+        )}
+      </div>
+    );
+  }
+
   if(!started){
     return(
       <div style={{minHeight:"100vh",width:"100%",background:C.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"clamp(20px,6vw,40px)",boxSizing:"border-box",gap:"clamp(20px,5vw,32px)"}}>
