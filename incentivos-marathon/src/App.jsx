@@ -430,7 +430,90 @@ function Rango({val,set}){
   );
 }
 
-export default function App(){
+// ── Retiro del simulador ─────────────────────────────────────────────
+// true  = se muestra el aviso "ya no está en uso" en lugar del simulador.
+// false = vuelve el simulador tal como estaba (el código no se borró).
+const SIMULADOR_RETIRADO = true;
+const SPORTSNET_IOS = "https://apps.apple.com/us/app/sportsnet/id6778927169";
+const SPORTSNET_ANDROID = "https://play.google.com/store/apps/details?id=com.aseyco.etse";
+const QR_IOS = {n:33, d:"M0 0h7v1h-7zM9 0h1v1h-1zM11 0h3v1h-3zM17 0h5v1h-5zM23 0h1v1h-1zM26 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM9 1h3v1h-3zM13 1h3v1h-3zM17 1h1v1h-1zM20 1h1v1h-1zM22 1h1v1h-1zM24 1h1v1h-1zM26 1h1v1h-1zM32 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM8 2h1v1h-1zM12 2h2v1h-2zM15 2h1v1h-1zM17 2h7v1h-7zM26 2h1v1h-1zM28 2h3v1h-3zM32 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h1v1h-1zM12 3h1v1h-1zM14 3h3v1h-3zM19 3h1v1h-1zM23 3h1v1h-1zM26 3h1v1h-1zM28 3h3v1h-3zM32 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM8 4h2v1h-2zM11 4h1v1h-1zM13 4h1v1h-1zM15 4h1v1h-1zM17 4h2v1h-2zM21 4h4v1h-4zM26 4h1v1h-1zM28 4h3v1h-3zM32 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM11 5h6v1h-6zM20 5h2v1h-2zM26 5h1v1h-1zM32 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h7v1h-7zM8 7h2v1h-2zM11 7h1v1h-1zM14 7h2v1h-2zM21 7h3v1h-3zM0 8h1v1h-1zM2 8h5v1h-5zM11 8h1v1h-1zM13 8h7v1h-7zM22 8h1v1h-1zM24 8h1v1h-1zM26 8h5v1h-5zM0 9h2v1h-2zM4 9h1v1h-1zM7 9h1v1h-1zM14 9h1v1h-1zM16 9h1v1h-1zM18 9h3v1h-3zM22 9h3v1h-3zM26 9h2v1h-2zM29 9h4v1h-4zM0 10h1v1h-1zM2 10h3v1h-3zM6 10h1v1h-1zM8 10h2v1h-2zM15 10h1v1h-1zM18 10h1v1h-1zM20 10h2v1h-2zM25 10h1v1h-1zM28 10h1v1h-1zM30 10h2v1h-2zM0 11h2v1h-2zM3 11h1v1h-1zM5 11h1v1h-1zM7 11h2v1h-2zM11 11h1v1h-1zM14 11h2v1h-2zM19 11h1v1h-1zM21 11h1v1h-1zM23 11h2v1h-2zM28 11h5v1h-5zM5 12h2v1h-2zM8 12h5v1h-5zM15 12h1v1h-1zM18 12h1v1h-1zM20 12h1v1h-1zM28 12h2v1h-2zM31 12h2v1h-2zM1 13h1v1h-1zM3 13h1v1h-1zM5 13h1v1h-1zM7 13h2v1h-2zM13 13h5v1h-5zM19 13h1v1h-1zM21 13h4v1h-4zM26 13h1v1h-1zM30 13h3v1h-3zM0 14h1v1h-1zM2 14h1v1h-1zM4 14h1v1h-1zM6 14h1v1h-1zM10 14h2v1h-2zM13 14h1v1h-1zM17 14h1v1h-1zM21 14h1v1h-1zM24 14h3v1h-3zM31 14h1v1h-1zM0 15h2v1h-2zM3 15h1v1h-1zM5 15h1v1h-1zM7 15h1v1h-1zM10 15h2v1h-2zM13 15h1v1h-1zM16 15h1v1h-1zM19 15h3v1h-3zM23 15h1v1h-1zM25 15h2v1h-2zM29 15h2v1h-2zM0 16h1v1h-1zM4 16h4v1h-4zM9 16h1v1h-1zM11 16h1v1h-1zM13 16h1v1h-1zM16 16h2v1h-2zM22 16h1v1h-1zM25 16h1v1h-1zM27 16h3v1h-3zM32 16h1v1h-1zM2 17h3v1h-3zM9 17h1v1h-1zM16 17h2v1h-2zM19 17h2v1h-2zM22 17h2v1h-2zM26 17h2v1h-2zM29 17h2v1h-2zM32 17h1v1h-1zM3 18h1v1h-1zM6 18h2v1h-2zM11 18h2v1h-2zM15 18h3v1h-3zM21 18h1v1h-1zM24 18h5v1h-5zM30 18h2v1h-2zM1 19h3v1h-3zM12 19h1v1h-1zM15 19h1v1h-1zM17 19h6v1h-6zM24 19h7v1h-7zM0 20h3v1h-3zM4 20h3v1h-3zM9 20h5v1h-5zM15 20h2v1h-2zM19 20h2v1h-2zM25 20h1v1h-1zM27 20h3v1h-3zM0 21h1v1h-1zM2 21h3v1h-3zM8 21h1v1h-1zM10 21h1v1h-1zM12 21h2v1h-2zM15 21h1v1h-1zM18 21h2v1h-2zM21 21h4v1h-4zM26 21h1v1h-1zM29 21h2v1h-2zM32 21h1v1h-1zM0 22h1v1h-1zM2 22h1v1h-1zM6 22h1v1h-1zM8 22h2v1h-2zM11 22h3v1h-3zM15 22h2v1h-2zM20 22h2v1h-2zM24 22h1v1h-1zM27 22h2v1h-2zM30 22h2v1h-2zM0 23h1v1h-1zM2 23h1v1h-1zM4 23h1v1h-1zM8 23h1v1h-1zM10 23h3v1h-3zM15 23h1v1h-1zM21 23h1v1h-1zM25 23h1v1h-1zM28 23h3v1h-3zM0 24h1v1h-1zM3 24h1v1h-1zM5 24h2v1h-2zM8 24h3v1h-3zM12 24h4v1h-4zM17 24h1v1h-1zM22 24h1v1h-1zM24 24h6v1h-6zM31 24h1v1h-1zM8 25h1v1h-1zM10 25h1v1h-1zM12 25h1v1h-1zM16 25h1v1h-1zM19 25h1v1h-1zM21 25h1v1h-1zM23 25h2v1h-2zM28 25h1v1h-1zM30 25h3v1h-3zM0 26h7v1h-7zM11 26h6v1h-6zM18 26h1v1h-1zM20 26h1v1h-1zM23 26h2v1h-2zM26 26h1v1h-1zM28 26h1v1h-1zM30 26h2v1h-2zM0 27h1v1h-1zM6 27h1v1h-1zM8 27h3v1h-3zM14 27h1v1h-1zM16 27h1v1h-1zM20 27h2v1h-2zM23 27h2v1h-2zM28 27h5v1h-5zM0 28h1v1h-1zM2 28h3v1h-3zM6 28h1v1h-1zM8 28h2v1h-2zM12 28h1v1h-1zM18 28h1v1h-1zM20 28h1v1h-1zM24 28h6v1h-6zM0 29h1v1h-1zM2 29h3v1h-3zM6 29h1v1h-1zM8 29h2v1h-2zM12 29h2v1h-2zM15 29h2v1h-2zM19 29h1v1h-1zM22 29h1v1h-1zM24 29h2v1h-2zM28 29h1v1h-1zM30 29h3v1h-3zM0 30h1v1h-1zM2 30h3v1h-3zM6 30h1v1h-1zM8 30h3v1h-3zM12 30h3v1h-3zM17 30h2v1h-2zM20 30h3v1h-3zM24 30h4v1h-4zM29 30h1v1h-1zM0 31h1v1h-1zM6 31h1v1h-1zM11 31h1v1h-1zM14 31h1v1h-1zM16 31h1v1h-1zM19 31h3v1h-3zM26 31h1v1h-1zM28 31h3v1h-3zM0 32h7v1h-7zM8 32h1v1h-1zM10 32h1v1h-1zM12 32h1v1h-1zM14 32h1v1h-1zM17 32h2v1h-2zM22 32h4v1h-4zM27 32h1v1h-1zM31 32h1v1h-1z"}; // código QR de cada link, embebido como trazado SVG
+const QR_ANDROID = {n:33, d:"M0 0h7v1h-7zM9 0h2v1h-2zM18 0h4v1h-4zM23 0h1v1h-1zM26 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM9 1h2v1h-2zM12 1h1v1h-1zM14 1h3v1h-3zM20 1h3v1h-3zM24 1h1v1h-1zM26 1h1v1h-1zM32 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM8 2h2v1h-2zM14 2h3v1h-3zM19 2h1v1h-1zM21 2h1v1h-1zM23 2h1v1h-1zM26 2h1v1h-1zM28 2h3v1h-3zM32 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h1v1h-1zM10 3h1v1h-1zM15 3h1v1h-1zM17 3h1v1h-1zM23 3h2v1h-2zM26 3h1v1h-1zM28 3h3v1h-3zM32 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM8 4h2v1h-2zM13 4h1v1h-1zM16 4h2v1h-2zM19 4h5v1h-5zM26 4h1v1h-1zM28 4h3v1h-3zM32 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h3v1h-3zM12 5h6v1h-6zM20 5h1v1h-1zM22 5h1v1h-1zM26 5h1v1h-1zM32 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h7v1h-7zM8 7h2v1h-2zM11 7h1v1h-1zM14 7h1v1h-1zM19 7h1v1h-1zM21 7h2v1h-2zM24 7h1v1h-1zM0 8h1v1h-1zM2 8h5v1h-5zM10 8h6v1h-6zM17 8h1v1h-1zM22 8h3v1h-3zM26 8h5v1h-5zM0 9h4v1h-4zM7 9h1v1h-1zM9 9h5v1h-5zM16 9h5v1h-5zM23 9h2v1h-2zM26 9h2v1h-2zM29 9h4v1h-4zM1 10h6v1h-6zM9 10h1v1h-1zM13 10h3v1h-3zM18 10h1v1h-1zM21 10h2v1h-2zM28 10h1v1h-1zM30 10h2v1h-2zM2 11h1v1h-1zM4 11h2v1h-2zM7 11h4v1h-4zM12 11h2v1h-2zM19 11h4v1h-4zM24 11h2v1h-2zM28 11h3v1h-3zM1 12h7v1h-7zM11 12h1v1h-1zM14 12h4v1h-4zM19 12h2v1h-2zM22 12h4v1h-4zM27 12h3v1h-3zM0 13h4v1h-4zM5 13h1v1h-1zM7 13h2v1h-2zM12 13h1v1h-1zM16 13h5v1h-5zM23 13h1v1h-1zM26 13h1v1h-1zM30 13h3v1h-3zM1 14h4v1h-4zM6 14h1v1h-1zM8 14h2v1h-2zM11 14h2v1h-2zM15 14h1v1h-1zM20 14h1v1h-1zM22 14h1v1h-1zM25 14h3v1h-3zM29 14h1v1h-1zM31 14h1v1h-1zM0 15h1v1h-1zM4 15h2v1h-2zM9 15h1v1h-1zM14 15h3v1h-3zM21 15h3v1h-3zM25 15h2v1h-2zM30 15h1v1h-1zM1 16h2v1h-2zM4 16h4v1h-4zM9 16h1v1h-1zM12 16h2v1h-2zM15 16h4v1h-4zM22 16h2v1h-2zM25 16h1v1h-1zM27 16h2v1h-2zM32 16h1v1h-1zM0 17h3v1h-3zM4 17h1v1h-1zM7 17h3v1h-3zM11 17h1v1h-1zM16 17h1v1h-1zM18 17h2v1h-2zM21 17h1v1h-1zM23 17h1v1h-1zM25 17h3v1h-3zM29 17h4v1h-4zM0 18h1v1h-1zM5 18h3v1h-3zM10 18h2v1h-2zM15 18h4v1h-4zM20 18h1v1h-1zM26 18h3v1h-3zM30 18h2v1h-2zM0 19h1v1h-1zM2 19h1v1h-1zM7 19h2v1h-2zM10 19h1v1h-1zM12 19h2v1h-2zM16 19h1v1h-1zM20 19h3v1h-3zM24 19h2v1h-2zM27 19h4v1h-4zM6 20h1v1h-1zM9 20h2v1h-2zM14 20h1v1h-1zM16 20h2v1h-2zM22 20h1v1h-1zM25 20h1v1h-1zM28 20h2v1h-2zM0 21h2v1h-2zM3 21h2v1h-2zM7 21h1v1h-1zM9 21h2v1h-2zM14 21h1v1h-1zM16 21h5v1h-5zM23 21h2v1h-2zM26 21h1v1h-1zM29 21h1v1h-1zM32 21h1v1h-1zM0 22h1v1h-1zM2 22h1v1h-1zM5 22h2v1h-2zM11 22h2v1h-2zM15 22h3v1h-3zM22 22h1v1h-1zM29 22h1v1h-1zM31 22h1v1h-1zM0 23h1v1h-1zM3 23h2v1h-2zM12 23h2v1h-2zM15 23h2v1h-2zM19 23h6v1h-6zM29 23h3v1h-3zM0 24h1v1h-1zM2 24h1v1h-1zM4 24h1v1h-1zM6 24h1v1h-1zM8 24h1v1h-1zM10 24h1v1h-1zM12 24h1v1h-1zM15 24h1v1h-1zM17 24h1v1h-1zM19 24h1v1h-1zM22 24h1v1h-1zM24 24h5v1h-5zM31 24h2v1h-2zM8 25h3v1h-3zM12 25h1v1h-1zM16 25h2v1h-2zM19 25h2v1h-2zM24 25h1v1h-1zM28 25h1v1h-1zM30 25h3v1h-3zM0 26h7v1h-7zM9 26h2v1h-2zM14 26h2v1h-2zM17 26h1v1h-1zM22 26h3v1h-3zM26 26h1v1h-1zM28 26h1v1h-1zM30 26h2v1h-2zM0 27h1v1h-1zM6 27h1v1h-1zM8 27h1v1h-1zM10 27h1v1h-1zM15 27h2v1h-2zM20 27h5v1h-5zM28 27h4v1h-4zM0 28h1v1h-1zM2 28h3v1h-3zM6 28h1v1h-1zM8 28h1v1h-1zM10 28h2v1h-2zM14 28h2v1h-2zM17 28h3v1h-3zM22 28h1v1h-1zM24 28h6v1h-6zM0 29h1v1h-1zM2 29h3v1h-3zM6 29h1v1h-1zM8 29h1v1h-1zM10 29h3v1h-3zM16 29h1v1h-1zM18 29h2v1h-2zM21 29h1v1h-1zM24 29h2v1h-2zM28 29h5v1h-5zM0 30h1v1h-1zM2 30h3v1h-3zM6 30h1v1h-1zM8 30h1v1h-1zM10 30h1v1h-1zM12 30h2v1h-2zM15 30h1v1h-1zM17 30h2v1h-2zM20 30h1v1h-1zM22 30h2v1h-2zM26 30h2v1h-2zM30 30h1v1h-1zM0 31h1v1h-1zM6 31h1v1h-1zM10 31h3v1h-3zM16 31h1v1h-1zM20 31h4v1h-4zM25 31h2v1h-2zM28 31h3v1h-3zM0 32h7v1h-7zM8 32h3v1h-3zM14 32h1v1h-1zM16 32h2v1h-2zM19 32h1v1h-1zM22 32h3v1h-3zM27 32h1v1h-1zM31 32h1v1h-1z"};
+
+function QrTile({qr,etiqueta}){
+  return(
+    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:10}}>
+      <div style={{background:"#fff",padding:12,borderRadius:16,lineHeight:0}}>
+        <svg width="148" height="148" viewBox={`-4 -4 ${qr.n+8} ${qr.n+8}`} shapeRendering="crispEdges" role="img" aria-label={`Código QR para abrir SportsNet en ${etiqueta}`}>
+          <rect x="-4" y="-4" width={qr.n+8} height={qr.n+8} fill="#fff"/>
+          <path d={qr.d} fill={C.bg}/>
+        </svg>
+      </div>
+      <p style={{color:C.whi,fontSize:13,fontWeight:600,margin:0}}>{etiqueta}</p>
+    </div>
+  );
+}
+
+function SimuladorRetirado(){
+  useEffect(()=>{
+    const l=document.createElement("link");
+    l.href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;500;600&display=swap";
+    l.rel="stylesheet";document.head.appendChild(l);
+    document.documentElement.style.background=C.bg;
+    document.body.style.background=C.bg;
+    document.body.style.margin="0";
+  },[]);
+  const[ancho,setAncho]=useState(typeof window!=="undefined"?window.innerWidth:1024);
+  useEffect(()=>{
+    const f=()=>setAncho(window.innerWidth);
+    window.addEventListener("resize",f);
+    return()=>window.removeEventListener("resize",f);
+  },[]);
+  const[plat]=useState(()=>{
+    if(typeof navigator==="undefined")return "otro";
+    const ua=navigator.userAgent||"";
+    if(/Android/i.test(ua))return "android";
+    if(/iPhone|iPad|iPod/i.test(ua)||(/Macintosh/i.test(ua)&&navigator.maxTouchPoints>1))return "ios";
+    return "otro";
+  });
+  const verQR=ancho>=720;
+  const ambos=plat==="otro";
+  const btn={display:"flex",alignItems:"center",justifyContent:"center",gap:10,minHeight:52,boxSizing:"border-box",padding:"0 28px",borderRadius:14,textDecoration:"none",fontFamily:"inherit",fontWeight:600,fontSize:16,width:"100%"};
+  const flecha=<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>;
+  return(
+    <div style={{minHeight:"100vh",width:"100%",background:C.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"clamp(24px,6vw,48px)",boxSizing:"border-box",gap:20,fontFamily:"Inter,system-ui,sans-serif"}}>
+      <div style={{width:60,height:60,borderRadius:18,background:`${C.b1}22`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={C.b2} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>
+      </div>
+      <p style={{color:C.b2,fontSize:12,textTransform:"uppercase",letterSpacing:".12em",margin:0,fontWeight:600}}>Vendes+, Ganas+</p>
+      <h1 style={{color:C.whi,fontWeight:900,fontSize:"clamp(30px,8vw,44px)",lineHeight:1.05,margin:0,fontFamily:"Barlow Condensed,sans-serif",textAlign:"center",textTransform:"uppercase"}}>Este simulador<br/>ya no está en uso</h1>
+      <p style={{color:C.sof,fontSize:16,margin:0,textAlign:"center",maxWidth:360,lineHeight:1.55}}>Tu simulador de incentivos ahora está dentro de la app <strong style={{color:C.whi}}>SportsNet</strong>. Ábrelo desde ahí para ver tus incentivos con las tasas actualizadas.</p>
+      <div style={{display:"flex",flexDirection:"column",gap:12,width:"100%",maxWidth:340,marginTop:4}}>
+        {plat!=="android"&&(
+          <a href={SPORTSNET_IOS} target="_blank" rel="noopener noreferrer" style={{...btn,background:C.b1,color:"#fff"}}>
+            {ambos?"Abrir en App Store (iPhone)":"Abrir SportsNet"}{flecha}
+          </a>
+        )}
+        {plat!=="ios"&&(
+          <a href={SPORTSNET_ANDROID} target="_blank" rel="noopener noreferrer" style={ambos?{...btn,background:"transparent",color:C.whi,border:`1px solid ${C.b1}`}:{...btn,background:C.b1,color:"#fff"}}>
+            {ambos?"Abrir en Google Play (Android)":"Abrir SportsNet"}{ambos?null:flecha}
+          </a>
+        )}
+      </div>
+      {verQR&&(
+        <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:14,marginTop:8}}>
+          <div style={{display:"flex",gap:24,flexWrap:"wrap",justifyContent:"center"}}>
+            <QrTile qr={QR_IOS} etiqueta="iPhone"/>
+            <QrTile qr={QR_ANDROID} etiqueta="Android"/>
+          </div>
+          <p style={{color:C.sof,fontSize:13,margin:0,textAlign:"center",maxWidth:300,lineHeight:1.5}}>¿Estás en un computador? Escanea el código con la cámara de tu celular.</p>
+        </div>
+      )}
+      <p style={{color:C.sof,fontSize:13,margin:"8px 0 0",textAlign:"center",maxWidth:300,lineHeight:1.5}}>Ya puedes quitar este acceso directo de tu pantalla de inicio.</p>
+    </div>
+  );
+}
+
+function SimuladorApp(){
   useEffect(()=>{
     const l=document.createElement("link");
     l.href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;500;600&display=swap";
@@ -877,4 +960,8 @@ export default function App(){
       </div>
     </div>
   );
+}
+
+export default function App(){
+  return SIMULADOR_RETIRADO ? <SimuladorRetirado/> : <SimuladorApp/>;
 }
